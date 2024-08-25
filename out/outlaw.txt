@@ -45,7 +45,7 @@ sinister_strike
 adrenaline_rush if !adrenaline_rush.up & (!finish_condition | !talent.improved_adrenaline_rush) | stealthed.all & talent.crackshot & talent.improved_adrenaline_rush & cp <= 2
 blade_flurry if targets >= 2 & blade_flurry.remains < gcd
 blade_flurry if talent.deft_maneuvers & !finish_condition & (targets >= 3 & cp.deficit = targets + broadside.up | targets >= 5)
-roll_the_bones if rtb_reroll | rtb_buffs = 0 | rtb_buffs.max_remains <= 7 & cooldown.vanish.ready & talent.crackshot
+roll_the_bones if rtb_reroll | rtb_buffs = 0
 keep_it_rolling if rtb_buffs >= 4 & (rtb_buffs.min_remains < 2 | broadside.up)
 ghostly_strike if cp < cp_max_spend
 use_item,name = manic_grieftorch if !stealthed.all & between_the_eyes.up | fight_remains <= 5
