@@ -16,6 +16,7 @@ def fix_line(line):
 
     # Rogue
     line = line.replace("effective_combo_points", "cp")
+    line = line.replace("combo_points", "cp")
 
     line = (
         line.replace("&", " & ")

@@ -17,8 +17,8 @@ var single_target = targets.fan_of_knives < 2
 var regen_saturated = energy.regen_combined > 35
 var not_pooling = (deathmark.ticking | kingsbane.ticking | shiv.up) | (envenom.up & envenom.remains <= 1) | energy.pct >= (40 + 30 * talent.hand_of_fate - 15 * talent.vicious_venoms) | fight_remains <= 20
 call_action_list,name = stealthed if stealthed.rogue | stealthed.improved_garrote | master_assassin_remains > 0
-slice_and_dice if !slice_and_dice.up & rupture.ticking & combo_points >= 1 & (!indiscriminate_carnage.up | single_target)
-envenom if slice_and_dice.up & slice_and_dice.remains < 5 & combo_points >= 5
+slice_and_dice if !slice_and_dice.up & rupture.ticking & cp >= 1 & (!indiscriminate_carnage.up | single_target)
+envenom if slice_and_dice.up & slice_and_dice.remains < 5 & cp >= 5
 call_action_list,name = cds
 call_action_list,name = core_dot
 call_action_list,name = aoe_dot if !single_target
@@ -33,10 +33,10 @@ var scent_effective_max_stacks = (targets.fan_of_knives * talent.scent_of_blood.
 var scent_saturation = scent_of_blood.stack >= scent_effective_max_stacks
 var dot_finisher_condition = cp >= effective_spend_cp & (pmultiplier <= 1)
 crimson_tempest,target_if = min:remains if targets >= 3 & dot_finisher_condition & refreshable & energy.regen_combined > 25 & !cooldown.deathmark.ready & target.time_to_die - remains > 6
-garrote,cycle_targets = 1 if combo_points.deficit >= 1 & (pmultiplier <= 1) & refreshable & !regen_saturated & target.time_to_die - remains > 12
+garrote,cycle_targets = 1 if cp.deficit >= 1 & (pmultiplier <= 1) & refreshable & !regen_saturated & target.time_to_die - remains > 12
 rupture,cycle_targets = 1 if dot_finisher_condition & refreshable & (!regen_saturated & (talent.scent_of_blood.rank = 2 | talent.scent_of_blood.rank <= 1 & (indiscriminate_carnage.up | target.time_to_die - remains > 15))) & target.time_to_die - remains > (4 + (talent.dashing_scoundrel * 5) + (regen_saturated * 6)) & !darkest_night.up
 rupture,cycle_targets = 1 if dot_finisher_condition & refreshable & regen_saturated & !scent_saturation & target.time_to_die - remains > 15 & !darkest_night.up
-garrote if refreshable & combo_points.deficit >= 1 & (pmultiplier <= 1 | remains <= tick_time & targets.fan_of_knives >= 3) & (remains <= tick_time * 2 & targets.fan_of_knives >= 3) & (target.time_to_die - remains) > 4 & master_assassin_remains = 0
+garrote if refreshable & cp.deficit >= 1 & (pmultiplier <= 1 | remains <= tick_time & targets.fan_of_knives >= 3) & (remains <= tick_time * 2 & targets.fan_of_knives >= 3) & (target.time_to_die - remains) > 4 & master_assassin_remains = 0
 
 # cds
 var deathmark_ma_condition = !talent.master_assassin.enabled | garrote.ticking
@@ -53,14 +53,14 @@ call_action_list,name = vanish if !stealthed.all & master_assassin_remains = 0
 cold_blood if cp >= effective_spend_cp & !rupture.refreshable & !edge_case.up & !darkest_night.up & cooldown.deathmark.remains > 10
 
 # core_dot
-garrote if combo_points.deficit >= 1 & (pmultiplier <= 1) & refreshable & target.time_to_die - remains > 12
+garrote if cp.deficit >= 1 & (pmultiplier <= 1) & refreshable & target.time_to_die - remains > 12
 rupture if cp >= effective_spend_cp & (pmultiplier <= 1) & refreshable & target.time_to_die - remains > (4 + (talent.dashing_scoundrel * 5) + (regen_saturated * 6)) & !darkest_night.up
 
 # direct
 envenom if !darkest_night.up & cp >= effective_spend_cp & (not_pooling | amplifying_poison.stack >= 20 | cp > cp_max_spend | !single_target) & !vanish.up
 envenom if darkest_night.up & cp >= cp_max_spend
-var use_filler = combo_points.deficit > 1 | not_pooling | !single_target
-var use_caustic_filler = talent.caustic_spatter & rupture.ticking & (!caustic_spatter.up | caustic_spatter.remains <= 2) & combo_points.deficit > 1 & !single_target
+var use_filler = cp.deficit > 1 | not_pooling | !single_target
+var use_caustic_filler = talent.caustic_spatter & rupture.ticking & (!caustic_spatter.up | caustic_spatter.remains <= 2) & cp.deficit > 1 & !single_target
 mutilate if use_caustic_filler
 ambush if use_caustic_filler
 echoing_reprimand if use_filler | fight_remains < 20
@@ -104,12 +104,12 @@ envenom if cp >= effective_spend_cp & kingsbane.ticking & envenom.remains <= 3
 envenom if cp >= effective_spend_cp & master_assassin_aura.up & single_target
 rupture,target_if = cp >= effective_spend_cp & indiscriminate_carnage.up & refreshable & (!regen_saturated | !scent_saturation | !rupture.ticking)
 garrote,target_if = min:remains if stealthed.improved_garrote & (remains < 12 | pmultiplier <= 1 | (indiscriminate_carnage.up & active_garrote < targets.fan_of_knives)) & !single_target & target.time_to_die - remains > 2
-garrote if stealthed.improved_garrote & (pmultiplier <= 1 | remains < 12 | !single_target & master_assassin_aura.remains < 3) & combo_points.deficit >= 1 + 2 * talent.shrouded_suffocation
+garrote if stealthed.improved_garrote & (pmultiplier <= 1 | remains < 12 | !single_target & master_assassin_aura.remains < 3) & cp.deficit >= 1 + 2 * talent.shrouded_suffocation
 
 # vanish
 pool_resource,for_next = 1,extra_amount = 45
 vanish if !fatebound_lucky_coin.up & (fatebound_coin_tails.stack >= 5 | fatebound_coin_heads.stack >= 5)
-vanish if !talent.master_assassin & !talent.indiscriminate_carnage & talent.improved_garrote & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & (deathmark.up | cooldown.deathmark.remains < 4) & combo_points.deficit >= (targets.fan_of_knives > ?4)
+vanish if !talent.master_assassin & !talent.indiscriminate_carnage & talent.improved_garrote & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & (deathmark.up | cooldown.deathmark.remains < 4) & cp.deficit >= (targets.fan_of_knives > ?4)
 pool_resource,for_next = 1,extra_amount = 45
 vanish if !talent.master_assassin & talent.indiscriminate_carnage & talent.improved_garrote & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & targets.fan_of_knives > 2 & (target.time_to_die - remains > 15 | raid_event.adds.in > 20)
 vanish if !talent.improved_garrote & talent.master_assassin & !rupture.refreshable & garrote.remains > 3 & deathmark.up & (shiv.up | deathmark.remains < 4)

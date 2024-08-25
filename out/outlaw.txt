@@ -18,7 +18,7 @@ var rtb_reroll = rtb_buffs.will_lose = (rtb_buffs.will_lose.buried_treasure + rt
 variable,name = rtb_reroll if talent.loaded_dice,value = rtb_buffs.will_lose = loaded_dice.up
 var rtb_reroll = rtb_reroll & rtb_buffs.longer = 0 | rtb_buffs.normal = 0 & rtb_buffs.longer >= 1 & rtb_buffs < 6 & rtb_buffs.max_remains <= 39 & !stealthed.all & loaded_dice.up
 variable,name = rtb_reroll,op = reset if !(raid_event.adds.remains > 12 | raid_event.adds.up & (raid_event.adds.in - raid_event.adds.remains) < 6 | target.time_to_die > 12) | fight_remains < 12
-var ambush_condition = (talent.hidden_opportunity | combo_points.deficit >= 2 + talent.improved_ambush + broadside.up) & energy >= 50
+var ambush_condition = (talent.hidden_opportunity | cp.deficit >= 2 + talent.improved_ambush + broadside.up) & energy >= 50
 var finish_condition = cp >= cp_max_spend - 1 - (stealthed.all & talent.crackshot | (talent.hand_of_fate | talent.flawless_form) & talent.hidden_opportunity & (audacity.up | opportunity.up))
 var blade_flurry_sync = targets.blade_flurry < 2 & raid_event.adds.in > 20 | blade_flurry.remains > gcd
 call_action_list,name = cds
@@ -35,19 +35,19 @@ echoing_reprimand
 ambush if talent.hidden_opportunity & audacity.up
 pistol_shot if talent.fan_the_hammer & talent.audacity & talent.hidden_opportunity & opportunity.up & !audacity.up
 pistol_shot if talent.fan_the_hammer & opportunity.up & (opportunity.stack >= opportunity.max_stack | opportunity.remains < 2)
-pistol_shot if talent.fan_the_hammer & opportunity.up & (combo_points.deficit >= (1 + (talent.quick_draw + broadside.up) * (talent.fan_the_hammer.rank + 1)) | combo_points <= talent.ruthlessness)
-pistol_shot if !talent.fan_the_hammer & opportunity.up & (energy.base_deficit > energy.regen * 1.5 | combo_points.deficit <= 1 + broadside.up | talent.quick_draw.enabled | talent.audacity.enabled & !audacity.up)
+pistol_shot if talent.fan_the_hammer & opportunity.up & (cp.deficit >= (1 + (talent.quick_draw + broadside.up) * (talent.fan_the_hammer.rank + 1)) | cp <= talent.ruthlessness)
+pistol_shot if !talent.fan_the_hammer & opportunity.up & (energy.base_deficit > energy.regen * 1.5 | cp.deficit <= 1 + broadside.up | talent.quick_draw.enabled | talent.audacity.enabled & !audacity.up)
 pool_resource,for_next = 1
 ambush if talent.hidden_opportunity
 sinister_strike
 
 # cds
-adrenaline_rush if !adrenaline_rush.up & (!finish_condition | !talent.improved_adrenaline_rush) | stealthed.all & talent.crackshot & talent.improved_adrenaline_rush & combo_points <= 2
+adrenaline_rush if !adrenaline_rush.up & (!finish_condition | !talent.improved_adrenaline_rush) | stealthed.all & talent.crackshot & talent.improved_adrenaline_rush & cp <= 2
 blade_flurry if targets >= 2 & blade_flurry.remains < gcd
-blade_flurry if talent.deft_maneuvers & !finish_condition & (targets >= 3 & combo_points.deficit = targets + broadside.up | targets >= 5)
+blade_flurry if talent.deft_maneuvers & !finish_condition & (targets >= 3 & cp.deficit = targets + broadside.up | targets >= 5)
 roll_the_bones if rtb_reroll | rtb_buffs = 0 | rtb_buffs.max_remains <= 7 & cooldown.vanish.ready & talent.crackshot
 keep_it_rolling if rtb_buffs >= 4 & (rtb_buffs.min_remains < 2 | broadside.up)
-ghostly_strike if combo_points < cp_max_spend
+ghostly_strike if cp < cp_max_spend
 use_item,name = manic_grieftorch if !stealthed.all & between_the_eyes.up | fight_remains <= 5
 use_item,name = beacon_to_the_beyond if !stealthed.all & between_the_eyes.up | fight_remains <= 5
 use_item,name = imperfect_ascendancy_serum if !stealthed.all | fight_remains <= 22
@@ -81,7 +81,7 @@ cold_blood if finish_condition
 pool_resource,for_next = 1
 between_the_eyes if finish_condition & talent.crackshot & (!shadowmeld.up | stealthed.rogue)
 dispatch if finish_condition
-pistol_shot if talent.crackshot & talent.fan_the_hammer.rank >= 2 & opportunity.stack >= 6 & (broadside.up & combo_points <= 1 | greenskins_wickers.up)
+pistol_shot if talent.crackshot & talent.fan_the_hammer.rank >= 2 & opportunity.stack >= 6 & (broadside.up & cp <= 1 | greenskins_wickers.up)
 ambush if talent.hidden_opportunity
 
 # stealth_cds
