@@ -1,0 +1,28 @@
+# cooldowns
+flag->finish->sb if 6+ cp & sb.cooldown <= 2 & (sod.cooldown <= 3 | sod.duration > 3)
+sod if flag.cooldown > 10 | (flag.ready & sb.cooldown >= 20) | sd.remains >= 2
+vanish after sectec during cds
+sd if (sod.remains >= 6 & !flag_up | sod.up & sb.up) & (sectec.cooldown < 10 | sb.up)
+
+# finish if 6+ cp
+var secret_condition = dm.stack >= 2 | (sd.up & escalating_blade.stack >= 2)
+if sd.up:
+    coup_de_grace if fazed.up
+    sectec if secret_condition & cold_blood.cooldown > sd.remains - 2
+    eviscerate
+else:
+    slice_and_dice if cp >= 1 & !slice_and_dice.up
+    rupture
+    coup_de_grace if fazed.up & sod.up & sd.charges <= 0.85
+    sectec if secret_condition & cold_blood.cooldown > sd.remains - 2
+    rupture if finality_rupture.up & (sod.cooldown <= 3 | sod.up)
+    black_powder if escalating_blade.stack = 4
+    eviscerate
+
+# build
+backstab if energy >= 60
+
+# notes
+pot with sod up and (with sb up or up to 10 sec early)
+flag not worth casting in the final 10 sec
+let rupture fall off during final 6 sec
