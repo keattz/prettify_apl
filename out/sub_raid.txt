@@ -2,12 +2,11 @@
 var priority_rotation = priority_rotation
 var trinket_sync_slot = 1 if trinket.1.has_stat.any_dps & (!trinket.2.has_stat.any_dps | trinket.1.cooldown.duration >= trinket.2.cooldown.duration)
 var trinket_sync_slot = 2 if trinket.2.has_stat.any_dps & (!trinket.1.has_stat.any_dps | trinket.2.cooldown.duration > trinket.1.cooldown.duration)
-var trinket_sync_slot = 1 if trinket.1.is.treacherous_transmitter
 
 # actions
 var slice_and_dice.up = slice_and_dice.up
 call_action_list.cds
-call_action_list.items if trinket_sync_slot = 1
+call_action_list.items
 slice_and_dice if cp >= 1 & !slice_and_dice.up
 run_action_list,name = stealthed if stealthed.all
 call_action_list.stealth_cds
@@ -17,16 +16,16 @@ call_action_list.finish if (cp.deficit <= 1 + 0 | fight_remains <= 1 & cp >= 3) 
 call_action_list.build if energy.deficit <= 20 + 0 * 25 + 0 * 20 + 1 * 20
 
 # build
-shuriken_storm if targets >= 2 + (0 & lingering_shadow.remains >= 6 | perforated_veins.up) & (flawless_form.up | 0)
+shuriken_storm if targets >= 2 + (0 & lingering_shadow.remains >= 6 | perforated_veins.up) - (!find_weakness.up & !talent.improved_backstab) & (flawless_form.up | 0)
 shuriken_storm if clear_the_witnesses.up & (!symbols_of_death.up | 0) & (lingering_shadow.remains <= 6 | 1)
 gloomblade
 backstab
 
 # cds
-var ruptures_before_flag = targets <= 4 | 1 & 1 | (0 & (targets >= 5 & active_rupture >= targets - 2)) | 1
+var ruptures_before_flag = priority_rotation | targets <= 4 | 1 & 1 | (0 & (targets >= 5 & active_rupture >= targets - 2)) | 1
 cold_blood if 0 & cp >= 6
 sepsis if slice_and_dice.up & (cooldown.shadow_blades.remains <= 3 & cooldown.symbols_of_death.remains <= 3 | fight_remains <= 12)
-flagellation,target_if = max:target.time_to_die if slice_and_dice.up & ruptures_before_flag & cp >= 6 & target.time_to_die > 10 & (cooldown.shadow_blades.remains <= 2 | fight_remains <= 24) & (0 | cooldown.symbols_of_death.remains <= 3 | symbols_of_death.remains > 3)
+flagellation,target_if = max:target.time_to_die if slice_and_dice.up & ruptures_before_flag & cp >= 5 & target.time_to_die > 10 & (cooldown.shadow_blades.remains <= 2 | fight_remains <= 24) & (0 | cooldown.symbols_of_death.remains <= 3 | symbols_of_death.remains > 3)
 symbols_of_death if 0 & slice_and_dice.up & (shadow_blades.up | cooldown.shadow_blades.remains > 20)
 symbols_of_death if 1 & slice_and_dice.up & symbols_of_death.remains <= 3 & !the_rotten.up & (cooldown.flagellation.remains > 10 | cooldown.flagellation.up & cooldown.shadow_blades.remains >= 20 | shadow_dance.remains >= 2)
 shadow_blades if slice_and_dice.up & cp <= 1 & (flagellation_up | 0) | fight_remains <= 20
@@ -43,7 +42,7 @@ var racial_sync = shadow_blades.up | 0 & symbols_of_death.up | fight_remains < 2
 invoke_external_buff,name = power_infusion if shadow_dance.up
 
 # finish
-var secret_condition = !0 & (danse_macabre.stack >= 2 | 0 | (1 & shadow_dance.up & escalating_blade.stack >= 2))
+var secret_condition = ((danse_macabre.stack >= 2 + 1) | 0 | (1 & shadow_dance.up & escalating_blade.stack >= 2))
 rupture if !rupture.ticking & target.time_to_die - remains > 6
 var skip_rupture = thistle_tea.up & targets.shuriken_storm = 1 | shadow_dance.up & (targets.shuriken_storm = 1 | rupture.ticking & targets.shuriken_storm >= 2) | 0
 rupture if (!skip_rupture | priority_rotation) & target.time_to_die - remains > 6 & refreshable
@@ -53,7 +52,7 @@ secret_technique if secret_condition & (0 | cooldown.cold_blood.remains > shadow
 rupture,cycle_targets = 1 if !skip_rupture & !priority_rotation & targets.shuriken_storm >= 2 & target.time_to_die >= (2 * cp) & refreshable
 rupture if !skip_rupture & finality_rupture.up & (cooldown.symbols_of_death.remains <= 3 | symbols_of_death.up)
 black_powder if !priority_rotation & 0 & targets >= 3 & !0
-black_powder if !priority_rotation & 1 & ((escalating_blade.stack = 4 & !shadow_dance.up) | targets >= 3 & !flawless_form.up | targets > 10 | (!used_for_danse & shadow_dance.up & 0 & targets >= 3))
+black_powder if !priority_rotation & 1 & ((escalating_blade.stack = 4 & !shadow_dance.up) | targets >= 3 & !flawless_form.up | (!used_for_danse & shadow_dance.up & 0 & targets >= 3))
 coup_de_grace if fazed.up
 eviscerate
 
