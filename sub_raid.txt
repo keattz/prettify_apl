@@ -1,28 +1,30 @@
-# cooldowns
-flag->finish->sb if 6+ cp & sb.cooldown <= 2 & (sod.cooldown <= 3 | sod.duration > 3)
-sod if flag.cooldown > 10 | (flag.ready & sb.cooldown >= 20) | sd.remains >= 2
-vanish after sectec during cds
-sd if (sod.remains >= 6 & !flag_up | sod.up & sb.up) & (sectec.cooldown < 10 | sb.up)
+# cds
+flagellation if 5 cp
+SB after flag->finisher
+vanish after sectec during flag
+dance on cd until SB ends
 
-# finish if 6+ cp
-var secret_condition = dm.stack >= 2 | (sd.up & escalating_blade.stack >= 2)
-if sd.up:
-    coup_de_grace if fazed.up
-    sectec if secret_condition & cold_blood.cooldown > sd.remains - 2
+# rotation
+symbols (hold up to 10 sec for flag)
+dance if symbols.remains >= 6 & sectec.cd < 10
+if dance:
+    coup_de_grace if fazed
+    sectec at 3+ DM, or 1+ during SB
     eviscerate
 else:
-    slice_and_dice if cp >= 1 & !slice_and_dice.up
-    rupture
-    coup_de_grace if fazed.up & sod.up & sd.charges <= 0.85
-    sectec if secret_condition & cold_blood.cooldown > sd.remains - 2
-    rupture if finality_rupture.up & (sod.cooldown <= 3 | sod.up)
+    rupture if pandemic
+    coup_de_grace if fazed & raw symbols
     black_powder if escalating_blade.stack = 4
     eviscerate
-
-# build
-backstab if energy >= 60
+backstab
 
 # notes
-pot with sod up and (with sb up or up to 10 sec early)
-flag not worth casting in the final 10 sec
-let rupture fall off during final 6 sec
+dance doesn't care about cp
+hold sectec up to 2 sec for cold blood (overrides ALL cases)
+rupture may expire for 6 sec at end of fight
+always pair sectec with dance (do not sectec during raw symbols)
+coup > sectec EVEN in the opener
+guides advocate for raw symbols after cds but this is not exactly what the apl does - it will dance as soon as symbols.remains>=6 and sectec.cd<10
+aoe (3+ targets):
+- black powder in aoe if flawless form down
+- shadowstrike > backstab if flawless form down > shuriken storm

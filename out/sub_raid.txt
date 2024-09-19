@@ -33,16 +33,14 @@ echoing_reprimand if slice_and_dice.up & cp.deficit >= 3 & (0 | 1 | shadow_dance
 shuriken_tornado if slice_and_dice.up & symbols_of_death.up & cp <= 2 & !premeditation.up & (0 | cooldown.flagellation.remains > 20) & targets.shuriken_storm >= 3
 shuriken_tornado if slice_and_dice.up & !shadow_dance.up & !flagellation_up & !flagellation_persist.up & !shadow_blades.up & targets.shuriken_storm <= 2 & !raid_event.adds.up
 vanish if shadow_dance.up & 1 & 1 & (cp.deficit > 1) & (cooldown.flagellation.remains >= 60 | 0 | fight_remains <= (30 * cooldown.vanish.charges)) & cooldown.secret_technique.remains >= 10
-shadow_dance if !shadow_dance.up & fight_remains <= 8 + 1
-shadow_dance if !shadow_dance.up & 1 & 0 & shadow_blades.up & (subterfuge.up & targets >= 4 | subterfuge.remains >= 3)
-shadow_dance if !shadow_dance.up & 1 & 1 & rupture.ticking & slice_and_dice.up & (symbols_of_death.remains >= 6 & !flagellation_up | symbols_of_death.up & shadow_blades.up | shadow_blades.up & 0) & (cooldown.secret_technique.remains < 10 + 12 * 0 | shadow_blades.up) & (1 | (cp.deficit >= 7 & !shadow_blades.up | shadow_blades.up))
-thistle_tea if !thistle_tea.up & (shadow_dance.remains >= 4 & shadow_blades.up | shadow_dance.remains >= 4 & cooldown.cold_blood.remains <= 3) | fight_remains <= (6 * cooldown.thistle_tea.charges)
+shadow_dance if !shadow_dance.up & (1 & shadow_blades.up & ((0 & subterfuge.up) | (rupture.ticking & slice_and_dice.up & 1))) | fight_remains <= 8
+thistle_tea if !thistle_tea.up & (shadow_dance.remains >= 6) | fight_remains <= (6 * cooldown.thistle_tea.charges)
 potion if bloodlust.react | fight_remains < 30 | symbols_of_death.up & (shadow_blades.up | cooldown.shadow_blades.remains <= 10)
 var racial_sync = shadow_blades.up | 0 & symbols_of_death.up | fight_remains < 20
 invoke_external_buff,name = power_infusion if shadow_dance.up
 
 # finish
-var secret_condition = ((danse_macabre.stack >= 2 + 1) | 0 | (1 & shadow_dance.up & escalating_blade.stack >= 2))
+var secret_condition = ((danse_macabre.stack >= 3) | 0 | (1 & shadow_dance.up & (escalating_blade.stack >= 2 | shadow_blades.up)))
 rupture if !rupture.ticking & target.time_to_die - remains > 6
 var skip_rupture = thistle_tea.up & targets.shuriken_storm = 1 | shadow_dance.up & (targets.shuriken_storm = 1 | rupture.ticking & targets.shuriken_storm >= 2) | 0
 rupture if (!skip_rupture | priority_rotation) & target.time_to_die - remains > 6 & refreshable
