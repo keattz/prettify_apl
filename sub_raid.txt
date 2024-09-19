@@ -4,7 +4,7 @@ SB after flag->finisher
 vanish after sectec during flag
 dance on cd until SB ends
 
-# rotation
+# st rotation
 symbols (hold up to 10 sec for flag)
 dance if symbols.remains >= 6 & sectec.cd < 10
 if dance:
@@ -18,6 +18,10 @@ else:
     eviscerate
 backstab
 
+# aoe
+black powder in aoe if flawless form down
+shadowstrike > backstab if flawless form down > shuriken storm
+
 # notes
 dance doesn't care about cp
 hold sectec up to 2 sec for cold blood (overrides ALL cases)
@@ -25,6 +29,3 @@ rupture may expire for 6 sec at end of fight
 always pair sectec with dance (do not sectec during raw symbols)
 coup > sectec EVEN in the opener
 guides advocate for raw symbols after cds but this is not exactly what the apl does - it will dance as soon as symbols.remains>=6 and sectec.cd<10
-aoe (3+ targets):
-- black powder in aoe if flawless form down
-- shadowstrike > backstab if flawless form down > shuriken storm
