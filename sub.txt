@@ -1,0 +1,46 @@
+# Opener
+SS -> Pot + Flag -> ...
+
+# Cooldowns
+(5+ CP) Flag -> Finish -> (Dance Symbols) BS -> (SB Trinket) SecTec -> ...
+CB SecTec during 2nd Flag
+Vanish+SS when done dancing
+Symbols if sectec.cooldown < 8
+Dance with Symbols if (0-1 cp | 6+ cp)
+
+# During Dance
+finish on 6 cp:
+	sectec
+	coup_de_grace if fazed
+	powder on 4+ targets
+	eviscerate
+build:
+	backstab if premed
+	shuriken_storm once if 7+ targets
+	shadowstrike
+
+# Outside Dance
+finish on 6 cp:
+	sectec during symbols
+	rupture
+	coup_de_grace if fazed
+	powder on 3+ targets 
+	eviscerate
+build:
+	backstab if flawless_form down
+	shuriken_storm if 3+ targets
+	backstab
+
+# Notes
+During SB, if 4set buff up, build with Shuriken Storm
+Flag:
+	Don't Symbols if Flag cooldown < 30
+	Don't Coup if Flag cooldown < 20 (spam powder)
+	Don't Eviscerate if Flag cooldown < 10 (rupture if needed, otherwise just build)
+Symbols:
+	Always want to Supercharge SecTec
+	Use Symbols right after getting resurrected for free prepull supercharged cp
+	Can use Symbols during long downtime
+Can't Coup->Vanish
+Rupture may fall off during final 6 sec
+On fights where I have to hold cds a lil, I can reliably get a "dry CB"
