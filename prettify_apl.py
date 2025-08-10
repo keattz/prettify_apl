@@ -22,9 +22,15 @@ def fix_line(line, replacements=None):
     line = line.replace("variable.", "")
     line = line.replace("spell_targets", "targets")
 
+    # Reorder some terms
+    line = re.sub(r"cooldown\.(\w+)\.ready", r"\1.ready", line)
+    line = re.sub(r"cooldown\.(\w+)\.remains", r"\1.cooldown", line)
+    
     # Rogue
     line = line.replace("effective_combo_points", "cp")
     line = line.replace("combo_points", "cp")
+    line = line.replace("targets.fan_of_knives", "targets")
+    line = line.replace("target.time_to_die", "time_to_die")
 
     line = (
         line.replace("&", " & ")
@@ -73,6 +79,12 @@ def should_skip_line(line):
         "use_item,name=manic_grieftorch",
         "use_item,name=stormeaters_boon",
         "use_item,name=windscar_whetstone",
+        "use_item,name=junkmaestros_mega_magnet",
+        "use_item,name=treacherous_transmitter",
+        "use_item,name=mad_queens_mandate",
+        "use_item,name=unyielding_netherprism",
+        "do_treacherous_transmitter_task",
+        "invoke_external_buff,name=power_infusion",
 
         "goremaws_bite",
     ]

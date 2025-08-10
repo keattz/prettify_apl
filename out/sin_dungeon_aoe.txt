@@ -1,0 +1,97 @@
+# precombat
+var trinket_sync_slot = 1 if trinket.1.has_use_buff & (!trinket.2.has_use_buff | trinket.1.cooldown.duration >= trinket.2.cooldown.duration) & !trinket.2.is.treacherous_transmitter | trinket.1.is.treacherous_transmitter | trinket.1.is.house_of_cards
+var trinket_sync_slot = 2 if trinket.2.has_use_buff & (!trinket.1.has_use_buff | trinket.2.cooldown.duration > trinket.1.cooldown.duration) & !trinket.1.is.treacherous_transmitter | trinket.2.is.treacherous_transmitter | trinket.2.is.house_of_cards
+var effective_spend_cp = cp_max_spend - 2 <? 5 * 0
+slice_and_dice,precombat_seconds = 1
+
+# actions
+var 0 = targets = 1
+var regen_saturated = energy.regen_combined > 30 + 10 * 1
+var in_cooldowns = kingsbane.ticking | shiv.up
+var upper_limit_energy = energy.pct >= (80 - 10 * 2 - 30 * 0)
+var cd_soon = 0 & kingsbane.cooldown < 3 & !kingsbane.ready
+var not_pooling = in_cooldowns | darkest_night.up | upper_limit_energy | fight_remains <= 20
+var scent_effective_max_stacks = (targets * 2 * 2) >? 20
+var scent_saturation = scent_of_blood.stack >= scent_effective_max_stacks
+call_action_list.stealthed if stealthed.rogue | indiscriminate_carnage.up | stealthed.improved_garrote | master_assassin_remains > 0
+call_action_list.cds
+call_action_list.core_dot
+call_action_list.aoe_dot if !0
+call_action_list.direct
+
+# aoe_dot
+var dot_finisher_condition = cp >= effective_spend_cp
+crimson_tempest,target_if = min:remains if targets >= 2 & dot_finisher_condition & refreshable & time_to_die - remains > 6 & !darkest_night.up
+garrote,cycle_targets = 1 if cp.deficit >= 1 & pmultiplier <= 1 & refreshable & !regen_saturated & targets <= 3 & 1 & time_to_die - remains > 12
+rupture,cycle_targets = 1 if dot_finisher_condition & refreshable & (!kingsbane.ticking | cold_blood.up) & (!regen_saturated | !scent_saturation) & time_to_die > (7 + (0 * 5) + (regen_saturated * 6)) & !darkest_night.up
+garrote if refreshable & cp.deficit = 1 & (pmultiplier <= 1 | remains <= tick_time & targets >= 3) & (remains <= tick_time * 2 & targets >= 3) & (time_to_die - remains) > 4 & master_assassin_remains = 0
+
+# cds
+var deathmark_kingsbane_condition = kingsbane.cooldown <= 2 & envenom.up
+var deathmark_condition = rupture.ticking & (deathmark_kingsbane_condition | targets > 1 & slice_and_dice.remains > 5 | 1 & crimson_tempest.ticking) & !deathmark.up
+call_action_list.items
+call_action_list.shiv if !darkest_night.up
+deathmark if (deathmark_condition & time_to_die >= 10) | fight_remains <= 20
+kingsbane if (shiv.up | shiv.cooldown < 6) & (envenom.up | targets > 1) & (deathmark.cooldown >= 50 - 15 * set_bonus.tww3_fatebound_4pc | deathmark.ticking) | fight_remains <= 15
+thistle_tea if !thistle_tea.up & shiv.remains >= 6 | !thistle_tea.up & kingsbane.ticking & kingsbane.remains <= 6 | !thistle_tea.up & fight_remains <= cooldown.thistle_tea.charges * 6
+call_action_list.misc_cds
+call_action_list.vanish if !stealthed.all & master_assassin_remains = 0 | 1 & 0 & !scent_saturation & active_rupture < targets & targets >= 3
+cold_blood,use_off_gcd = 1 if (fatebound_coin_tails.stack > 0 & fatebound_coin_heads.stack > 0) | shiv.up & (deathmark.cooldown > 50 & !set_bonus.tww3_fatebound_4pc | kingsbane.ticking & set_bonus.tww3_fatebound_4pc | 1 & cp >= effective_spend_cp)
+
+# core_dot
+garrote if cp.deficit >= 1 & (pmultiplier <= 1) & refreshable & time_to_die - remains > 12
+rupture if cp >= effective_spend_cp & (pmultiplier <= 1) & refreshable & time_to_die - remains > (4 + (0 * 5) + (regen_saturated * 6)) & (!darkest_night.up | 1 & !caustic_spatter.up)
+crimson_tempest if cp >= effective_spend_cp & refreshable & pmultiplier <= persistent_multiplier & !darkest_night.up & 1 & targets = 1
+
+# direct
+var use_caustic_filler = 1 & rupture.ticking & (!caustic_spatter.up | caustic_spatter.remains <= 2) & cp.deficit >= 1 & !0
+mutilate if use_caustic_filler
+ambush if use_caustic_filler
+envenom if !darkest_night.up & cp >= effective_spend_cp & (not_pooling | amplifying_poison.stack >= 20 | !0)
+envenom if darkest_night.up & cp >= cp_max_spend
+var use_filler = cp <= effective_spend_cp & !cd_soon | not_pooling | !0
+var fok_target_count = (clear_the_witnesses.up & (targets >= 2 - (lingering_darkness.up | 1))) | (targets >= 3 - (0 & 1) + 0 + 1)
+fan_of_knives if darkest_night.up & cp = 6 & (1 | targets >= 2)
+fan_of_knives if use_filler & !priority_rotation & fok_target_count
+ambush if use_filler & (blindside.up | stealthed.rogue) & (!kingsbane.ticking | deathmark.down | blindside.up)
+mutilate,target_if = !deadly_poison_ticking & !amplifying_poison.up if use_filler & targets = 2
+mutilate if use_filler
+
+# items
+var base_trinket_condition = rupture.ticking & deathmark.cooldown < 2 & !deathmark.ready | deathmark.ticking | fight_remains <= 22
+use_items,slots = trinket1 if (trinket_sync_slot = 1 & (deathmark.up | kingsbane.ticking) | (trinket_sync_slot = 2 & !trinket.2.cooldown.ready & deathmark.cooldown > 20)) | !trinket_sync_slot | fight_remains <= 20
+use_items,slots = trinket2 if (trinket_sync_slot = 2 & (deathmark.up | kingsbane.ticking) | (trinket_sync_slot = 1 & !trinket.1.cooldown.ready & deathmark.cooldown > 20)) | !trinket_sync_slot | fight_remains <= 20
+
+# misc_cds
+potion if bloodlust.react | fight_remains < 30 | deathmark.up
+
+# shiv
+var shiv_condition = !shiv.up & garrote.ticking & rupture.ticking & targets <= 5
+var shiv_kingsbane_condition = 0 & envenom.up & shiv_condition
+shiv if 1 & shiv_kingsbane_condition & deathmark.ready & kingsbane.ready & set_bonus.tww3_fatebound_2pc
+shiv if 1 & !shiv.up & garrote.ticking & rupture.ticking & targets >= 4 & crimson_tempest.ticking & (target.health.pct <= 35 & 1 | cooldown.shiv.charges_fractional >= 1.9)
+shiv if 0 & shiv_kingsbane_condition & (kingsbane.ticking & kingsbane.remains < (8 + 2 * set_bonus.tww3_deathstalker_4pc) | !kingsbane.ticking & kingsbane.cooldown >= 20) & (0 | 0 | crimson_tempest.ticking)
+shiv if deathstalkers_mark.stack <= 2 & cp >= effective_spend_cp & lingering_darkness.up
+shiv if 1 & shiv_kingsbane_condition & (kingsbane.ticking & kingsbane.remains < (8 + 2 * set_bonus.tww3_deathstalker_4pc) & kingsbane.remains > 4 | kingsbane.cooldown <= 1 & cooldown.shiv.charges_fractional >= 1.7)
+shiv if deathmark.up & 1 & !shiv.up & garrote.ticking & rupture.ticking
+shiv if !deathmark.up & 1 & shiv_condition & (crimson_tempest.ticking | 0) & (((1 + 1) - cooldown.shiv.charges_fractional) * 30 < deathmark.cooldown) & raid_event.adds.in > 20
+shiv if 1 & 0 & shiv_condition & (0 | 0 | crimson_tempest.ticking)
+shiv if fight_remains <= cooldown.shiv.charges * (8 + 2 * set_bonus.tww3_deathstalker_4pc)
+
+# stealthed
+ambush if !deathstalkers_mark.up & 1 & cp < effective_spend_cp & (rupture.ticking | 0 | !2)
+shiv if 0 & kingsbane.ticking & kingsbane.remains < 8 & (!shiv.up & shiv.remains < 1) & envenom.up
+envenom if cp >= effective_spend_cp & kingsbane.ticking & envenom.remains <= 3 & (deathstalkers_mark.up | cold_blood.up | darkest_night.up & cp = 7)
+envenom if cp >= effective_spend_cp & master_assassin_aura.up & 0 & (deathstalkers_mark.up | cold_blood.up | darkest_night.up & cp = 7)
+rupture,target_if = cp >= effective_spend_cp & indiscriminate_carnage.up & refreshable & ((1 & !caustic_spatter.up & !rupture.ticking) | !darkest_night.up) & (!regen_saturated | !scent_saturation | ((1 | 1) & indiscriminate_carnage.up & !rupture.ticking)) & time_to_die > 15
+garrote,target_if = min:remains if stealthed.improved_garrote & (remains < 12 | pmultiplier <= 1 | (indiscriminate_carnage.up & active_garrote < targets)) & !0 & time_to_die - remains > 2 & cp.deficit > 2 - darkest_night.up * 2
+garrote if stealthed.improved_garrote & (pmultiplier <= 1 | refreshable) & cp.deficit >= 1 + 2 * 1
+
+# vanish
+vanish if cold_blood.up & fatebound_coin_tails.stack >= 1 & fatebound_coin_heads.stack >= 1 | !fatebound_lucky_coin.up & cp >= effective_spend_cp & (fatebound_coin_tails.stack >= 5 | fatebound_coin_heads.stack >= 5)
+vanish if 0 & 0 & 1 & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & (deathmark.up | deathmark.cooldown < 4) & cp.deficit >= (targets >? 4)
+vanish if 1 & 1 & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & targets > 2 & (time_to_die - remains > 15 | raid_event.adds.in > 20)
+vanish if 1 & 0 & !scent_saturation & targets > 2 & (time_to_die - remains > 15 | raid_event.adds.in > 20)
+vanish if 1 & deathmark.up & kingsbane.remains <= 6 + 3 * 0
+vanish if 1 & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & (deathmark.up) & raid_event.adds.in > 30
+

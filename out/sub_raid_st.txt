@@ -1,0 +1,62 @@
+# precombat
+var priority_rotation = priority_rotation
+var trinket_sync_slot = 1 if trinket.1.has_use_buff & (!trinket.2.has_use_buff | trinket.1.is.treacherous_transmitter | trinket.1.cooldown.duration >= trinket.2.cooldown.duration)
+var trinket_sync_slot = 2 if trinket.2.has_use_buff & (!trinket.1.has_use_buff | trinket.2.cooldown.duration > trinket.1.cooldown.duration)
+
+# actions
+var stealth = shadow_dance.up | stealth.up | vanish.up
+var targets = targets.shuriken_storm
+var skip_rupture = shadow_dance.up | 0 | targets >= 8 & 1 & 1
+var maintenance = (rupture.ticking | skip_rupture) & (slice_and_dice.up | targets <= 2)
+var secret = shadow_dance.up & !0 | (flagellation.cooldown < 60 & flagellation.cooldown > 30 & 1 & 1)
+var racial_sync = (shadow_blades.up & shadow_dance.up) | 0 & symbols_of_death.up | fight_remains < 20
+var shd_cp = cp <= 1 | 0 & cp >= 7 | cp >= 6 & 1
+call_action_list.cds
+call_action_list.race
+call_action_list.item
+call_action_list.stealth_cds if !stealth
+call_action_list.finish if !0 & cp >= 6 | 0 & cp =  = cp_max_spend | action.coup_de_grace.ready & secret_technique.cooldown > 0
+call_action_list.build
+call_action_list.fill if !stealth
+
+# build
+backstab if (1 | targets <= 2) & (shadow_dance.up & (premeditation.up | shadow_blades.up) & !used_for_danse | !stealth & shadow_blades.up)
+gloomblade if shadow_dance.up & !used_for_danse | !stealth & shadow_blades.up
+shadowstrike,cycle_targets = 1 if find_weakness.remains <= 2 & targets = 2 & 1 | !used_for_danse & 0
+shuriken_tornado if lingering_darkness.up | 0 & shadow_blades.cooldown >= 32 & targets >= 3 | 1 & (!stealth | targets >= 3) & (symbols_of_death.up | !raid_event.adds.up)
+shuriken_storm if clear_the_witnesses.up & (targets >= 2 | !symbols_of_death.up)
+shadowstrike,cycle_targets = 1 if 0 & !deathstalkers_mark.up & targets >= 3 & (shadow_blades.up | premeditation.up | 0)
+shuriken_storm if 0 & targets >= (2 + 3 * shadow_dance.up)
+shuriken_storm if 1 & (flawless_form.up & targets >= 3 & !stealth | silent_storm.up & targets >= 5 & shadow_dance.up)
+shuriken_storm if tww3_trickster_4pc.up & shadow_blades.up
+shadowstrike
+gloomblade
+backstab
+
+# cds
+cold_blood if cooldown.secret_technique.up & shadow_dance.up & cp >= 6 & secret & flagellation_persist.up
+potion if bloodlust.react | fight_remains < 30 | flagellation_up
+symbols_of_death if (symbols_of_death.remains <= 3.5 & maintenance & (targets >= 3 | !flagellation_up | rupture.remains >= 30) & (0 | flagellation.cooldown >= 30 - 15 * 0 & secret_technique.cooldown < 8 | 0) | fight_remains <= 15)
+shadow_blades if maintenance & shd_cp & shadow_dance.up & !premeditation.up
+thistle_tea if shadow_dance.remains > 4 & !thistle_tea.up
+flagellation if cp >= 5 & shadow_blades.cooldown <= 3 | fight_remains <= 25
+
+# finish
+secret_technique if secret
+rupture if !skip_rupture & (!rupture.ticking | refreshable | flagellation_up & !symbols_of_death.up & targets <= 2) & time_to_die - remains > 6
+rupture,cycle_targets = 1 if !skip_rupture & !priority_rotation & time_to_die >= (2 * cp) & refreshable & targets >= 2
+rupture if 1 & flagellation.cooldown < 10 & targets >= 3 & rupture.remains < fight_remains
+coup_de_grace if fazed.up & flagellation.cooldown >= 20 | fight_remains <= 10
+black_powder if !priority_rotation & maintenance & (((targets >= 2 & 0 & (!0 | shadow_dance.up & targets >= 5)) | 1 & fw_targets >= 5 - 2 * shadow_blades.up) | action.coup_de_grace.ready & targets >= 3)
+eviscerate if flagellation.cooldown >= 10 | targets >= 3
+
+# item
+use_item,name = cursed_stone_idol,use_off_gcd = 1 if rupture.remains >= 25 & flagellation_up | fight_remains <= 20
+use_items,slots = trinket1 if (trinket_sync_slot = 1 & (shadow_blades.up | fight_remains <= 20) | (trinket_sync_slot = 2 & (!trinket.2.cooldown.ready & shadow_blades.cooldown > 20)) | !trinket_sync_slot)
+use_items,slots = trinket2 if (trinket_sync_slot = 2 & (shadow_blades.up | fight_remains <= 20) | (trinket_sync_slot = 1 & (!trinket.1.cooldown.ready & shadow_blades.cooldown > 20)) | !trinket_sync_slot)
+
+# stealth_cds
+shadow_dance if (shd_cp | 0) & maintenance & (secret_technique.cooldown <= 24 | 1 & shadow_blades.up) & (symbols_of_death.remains >= 6 | shadow_blades.remains >= 6) | fight_remains <= 10
+vanish if energy >= 40 & !subterfuge.up & cp <= 3
+shadowmeld if energy >= 40 & cp.deficit >= 3
+
