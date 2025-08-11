@@ -5,8 +5,8 @@ SS -> Pot + Flag -> ...
 (5+ CP) Flag -> Finish -> (Dance Symbols) BS -> (SB Trinket) SecTec -> ...
 CB SecTec during 2nd Flag
 Vanish+SS when done dancing
-Symbols if sectec.cooldown < 8
-Dance with Symbols if (0-1 cp | 6+ cp)
+Symbols if sectec.cooldown < 8 and (0 cp or 7 cp)
+Dance with Symbols
 
 # During Dance
 finish on 6 cp:

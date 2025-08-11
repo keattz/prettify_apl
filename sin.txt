@@ -31,3 +31,4 @@ Fight ending:
 - Garrote may expire during final 12 sec
 - Rupture may expire during final 9 sec
 If Master Assassin becomes good, line it up with end of DM
+Shiv when KB buff icon says "8". If Shiv expires before KB, that was too early
