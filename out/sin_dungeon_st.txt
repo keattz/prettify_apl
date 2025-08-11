@@ -40,7 +40,7 @@ cold_blood,use_off_gcd = 1 if (fatebound_coin_tails.stack > 0 & fatebound_coin_h
 
 # core_dot
 garrote if cp.deficit >= 1 & (pmultiplier <= 1) & refreshable & time_to_die - remains > 12
-rupture if cp >= effective_spend_cp & (pmultiplier <= 1) & refreshable & time_to_die - remains > (4 + (0 * 5) + (regen_saturated * 6)) & (!darkest_night.up | 1 & !caustic_spatter.up)
+rupture if cp >= effective_spend_cp & (pmultiplier <= 1) & refreshable & !cold_blood.up & time_to_die - remains > (4 + (0 * 5) + (regen_saturated * 6)) & (!darkest_night.up | 1 & !caustic_spatter.up)
 crimson_tempest if cp >= effective_spend_cp & refreshable & pmultiplier <= persistent_multiplier & !darkest_night.up & 1 & targets = 1
 
 # direct
@@ -59,6 +59,7 @@ mutilate if use_filler
 
 # items
 var base_trinket_condition = rupture.ticking & deathmark.cooldown < 2 & !deathmark.ready | deathmark.ticking | fight_remains <= 22
+use_item,name = astral_gladiators_badge_of_ferocity,use_off_gcd = 1 if kingsbane.ticking | deathmkark.ticking | (kingsbane.cooldown > 60 | deathmark.cooldown > 60)
 use_items,slots = trinket1 if (trinket_sync_slot = 1 & (deathmark.up | kingsbane.ticking) | (trinket_sync_slot = 2 & !trinket.2.cooldown.ready & deathmark.cooldown > 20)) | !trinket_sync_slot | fight_remains <= 20
 use_items,slots = trinket2 if (trinket_sync_slot = 2 & (deathmark.up | kingsbane.ticking) | (trinket_sync_slot = 1 & !trinket.1.cooldown.ready & deathmark.cooldown > 20)) | !trinket_sync_slot | fight_remains <= 20
 
@@ -68,11 +69,11 @@ potion if bloodlust.react | fight_remains < 30 | deathmark.up
 # shiv
 var shiv_condition = !shiv.up & garrote.ticking & rupture.ticking & targets <= 5
 var shiv_kingsbane_condition = 0 & envenom.up & shiv_condition
-shiv if 1 & shiv_kingsbane_condition & deathmark.ready & kingsbane.ready & set_bonus.tww3_fatebound_2pc
+shiv if 1 & shiv_kingsbane_condition & (deathmark.ready | deathmark.cooldown <= 1) & (kingsbane.ready | kingsbane.cooldown <= 2) & set_bonus.tww3_fatebound_2pc
 shiv if 1 & !shiv.up & garrote.ticking & rupture.ticking & targets >= 4 & crimson_tempest.ticking & (target.health.pct <= 35 & 1 | cooldown.shiv.charges_fractional >= 1.9)
-shiv if 0 & shiv_kingsbane_condition & (kingsbane.ticking & kingsbane.remains < (8 + 2 * set_bonus.tww3_deathstalker_4pc) | !kingsbane.ticking & kingsbane.cooldown >= 20) & (0 | 1 | crimson_tempest.ticking)
+shiv if 0 & shiv_kingsbane_condition & (kingsbane.ticking & kingsbane.remains < (8 + 3 * set_bonus.tww3_deathstalker_4pc) | !kingsbane.ticking & kingsbane.cooldown >= 20) & (0 | 1 | crimson_tempest.ticking)
 shiv if deathstalkers_mark.stack <= 2 & cp >= effective_spend_cp & lingering_darkness.up
-shiv if 1 & shiv_kingsbane_condition & (kingsbane.ticking & kingsbane.remains < (8 + 2 * set_bonus.tww3_deathstalker_4pc) & kingsbane.remains > 4 | kingsbane.cooldown <= 1 & cooldown.shiv.charges_fractional >= 1.7)
+shiv if 1 & shiv_kingsbane_condition & (kingsbane.ticking & kingsbane.remains < (8 + 3 * set_bonus.tww3_deathstalker_4pc) & kingsbane.remains > 4 | kingsbane.cooldown <= 1 & cooldown.shiv.charges_fractional >= 1.7)
 shiv if deathmark.up & 1 & !shiv.up & garrote.ticking & rupture.ticking
 shiv if !deathmark.up & 1 & shiv_condition & (crimson_tempest.ticking | 0) & (((1 + 1) - cooldown.shiv.charges_fractional) * 30 < deathmark.cooldown) & raid_event.adds.in > 20
 shiv if 1 & 0 & shiv_condition & (0 | 1 | crimson_tempest.ticking)

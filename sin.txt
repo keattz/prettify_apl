@@ -9,6 +9,7 @@ Tea during last 6 sec of Shiv
 DS: Dry Shiv with Lingering Darkness
 
 # Bleeds & Finish
+Envenom if Cold Blood
 Maintain Garrote and Rupture on main targets
 Maintain CT on 2+ targets, or ST in M+
 Spread Rupture to additional targets if KB.down and DN.down
