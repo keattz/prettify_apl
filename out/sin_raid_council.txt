@@ -33,7 +33,7 @@ call_action_list.items
 call_action_list.shiv if !darkest_night.up
 deathmark if (deathmark_condition & time_to_die >= 10) | fight_remains <= 20
 kingsbane if (shiv.up | shiv.cooldown < 6) & (envenom.up | targets > 1) & (deathmark.cooldown >= 50 - 15 * set_bonus.tww3_fatebound_4pc | deathmark.ticking) | fight_remains <= 15
-thistle_tea if !thistle_tea.up & shiv.remains >= 6 | !thistle_tea.up & kingsbane.ticking & kingsbane.remains <= 6 | !thistle_tea.up & fight_remains <= cooldown.thistle_tea.charges * 6
+thistle_tea if talent.darkest_night & (!thistle_tea.up & shiv.remains >= 6 | !thistle_tea.up & kingsbane.ticking & kingsbane.remains <= 6 | !thistle_tea.up & fight_remains <= cooldown.thistle_tea.charges * 6)
 call_action_list.misc_cds
 call_action_list.vanish if !stealthed.all & master_assassin_remains = 0 | 0 & 1 & !scent_saturation & active_rupture < targets & targets >= 3
 cold_blood,use_off_gcd = 1 if (fatebound_coin_tails.stack > 0 & fatebound_coin_heads.stack > 0) | shiv.up & (deathmark.cooldown > 50 & !set_bonus.tww3_fatebound_4pc | kingsbane.ticking & set_bonus.tww3_fatebound_4pc | 1 & cp >= effective_spend_cp)
@@ -50,7 +50,8 @@ ambush if use_caustic_filler
 envenom if !darkest_night.up & cp >= effective_spend_cp & (not_pooling | amplifying_poison.stack >= 20 | !0)
 envenom if darkest_night.up & cp >= cp_max_spend
 var use_filler = cp <= effective_spend_cp & !cd_soon | not_pooling | !0
-var fok_target_count = (clear_the_witnesses.up & (targets >= 2 - (lingering_darkness.up | 0))) | (targets >= 3 - (1 & 1) + 1 + 1)
+fan_of_knives if clear_the_witnesses.up & (targets >= 2 - (lingering_darkness.up | 0))
+var fok_target_count = targets >= 3 - (1 & 1) + 1 + 1
 fan_of_knives if darkest_night.up & cp = 6 & (0 | targets >= 2)
 fan_of_knives if use_filler & !priority_rotation & fok_target_count
 ambush if use_filler & (blindside.up | stealthed.rogue) & (!kingsbane.ticking | deathmark.down | blindside.up)
@@ -89,7 +90,7 @@ garrote,target_if = min:remains if stealthed.improved_garrote & (remains < 12 | 
 garrote if stealthed.improved_garrote & (pmultiplier <= 1 | refreshable) & cp.deficit >= 1 + 2 * 0
 
 # vanish
-vanish if cold_blood.up & fatebound_coin_tails.stack >= 1 & fatebound_coin_heads.stack >= 1 | !fatebound_lucky_coin.up & cp >= effective_spend_cp & (fatebound_coin_tails.stack >= 5 | fatebound_coin_heads.stack >= 5)
+vanish if deathmark.ticking & cold_blood.up & fatebound_coin_tails.stack >= 1 & fatebound_coin_heads.stack >= 1
 vanish if 1 & 1 & 0 & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & (deathmark.up | deathmark.cooldown < 4) & cp.deficit >= (targets >? 4)
 vanish if 0 & 0 & cooldown.garrote.up & (garrote.pmultiplier <= 1 | garrote.refreshable) & targets > 2 & (time_to_die - remains > 15 | raid_event.adds.in > 20)
 vanish if 0 & 1 & !scent_saturation & targets > 2 & (time_to_die - remains > 15 | raid_event.adds.in > 20)
