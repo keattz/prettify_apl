@@ -8,8 +8,8 @@ var 0 = targets = 1
 thistle_tea if energy.pct < 50 & fight_remains < 10
 call_action_list.cds
 call_action_list.core_dot
-call_action_list.generate if !darkest_night.up & cp < 5 | darkest_night.up & cp.deficit > 0 | (talent.crimson_tempest & targets >= 5 & (active_garrote < targets | active_rupture < targets))
-call_action_list.spend if !darkest_night.up & cp >= 5 | darkest_night.up & cp.deficit = 0
+call_action_list.generate if !0 & cp < 5 | 0 & cp.deficit > 0 | (0 & targets >= 5 & (active_garrote < targets | active_rupture < targets))
+call_action_list.spend if !0 & cp >= 5 | 0 & cp.deficit = 0
 
 # cds
 deathmark if garrote.ticking & rupture.ticking & kingsbane.cooldown <= 2 & envenom.up
@@ -19,16 +19,16 @@ kingsbane if garrote.ticking & rupture.ticking & (deathmark.ticking | deathmark.
 call_action_list.vanish if !stealthed.rogue
 
 # core_dot
-garrote if (improved_garrote.up | stealthed.rogue) & (pmultiplier <= 1 | remains <= 14 + 6 * talent.razor_wire + 4 * !0)
+garrote if (improved_garrote.up | stealthed.rogue) & (pmultiplier <= 1 | remains <= 14 + 6 * 1 + 4 * !0)
 garrote if cp.deficit >= 1 & (pmultiplier <= 1 | !0) & refreshable & time_to_die - remains > 12
-rupture if cp >= 5 & refreshable & time_to_die - remains > 12 & (!darkest_night.up | !rupture.ticking)
+rupture if cp >= 5 & refreshable & time_to_die - remains > 12 & (!0 | !rupture.ticking)
 
 # generate
 crimson_tempest if !0 & (active_garrote < targets | active_rupture < targets)
-shiv if darkest_night.up & cp.deficit = 1 & targets <= 3 & talent.toxic_stiletto
-ambush if targets <= 1 + 1
-mutilate if targets <= 1 + 1
-fan_of_knives if targets > 1 + 1
+shiv if 0 & cp.deficit = 1 & targets <= 3 & 1
+ambush if targets <= 1 + 0
+mutilate if targets <= 1 + 0
+fan_of_knives if targets > 1 + 0
 
 # items
 var base_trinket_condition = rupture.ticking & deathmark.cooldown < 2 & !deathmark.ready | deathmark.ticking | fight_remains <= 22

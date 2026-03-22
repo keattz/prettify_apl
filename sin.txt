@@ -1,35 +1,26 @@
 # Opener
-(DS? Ambush) -> Garrote -> Build to Rupture -> (Build to CT) -> Build to Envenom -> 
+Garrote -> (Pot) Mut to Rupture -> Mut+Gar to Envenom -> Deathmark -> Puzzle Box -> Kingsbane -> Envenom ...
 
-# Cooldowns
-(Envenom Up) Shiv -> DM + Trinket -> KB + CB -> Vanish + Mut -> ...
-2 Shivs? Shiv before cooldowns
-1 Shiv? Shiv during last 8 sec of KB (11 for DS)
-Tea during last 6 sec of Shiv
-DS: Dry Shiv with Lingering Darkness
+# AoE Opener
+Garrote -> Garrote -> Rupture -> Deathmark -> Puzzle Box -> Kingsbane -> Envenom
 
-# Bleeds & Finish
-Envenom if Cold Blood
-Maintain Garrote and Rupture on main targets
-Maintain CT on 2+ targets, or ST in M+
-Spread Rupture to additional targets if KB.down and DN.down
-Pool to 90+ energy unless Shiv.up or Amp Poison.stacks = 20
-Envenom
-
-# Build
-DS: FoK at 6cp if DN.up, unless ST with VV
-Mutilate to maintain Caustic Spatter
-CtW on 2+ targets, -1 if Lingering Darkness, -1 if no VV
-FoK on 5+ targets, -1 if Thrown Precision, -1 if no VV
+# Rotation
+Deathmark
+Puzzle Box
+Kingsbane
+Vanish*
+Garrote if CP.deficit >= 1
+if 5 CP:
+    Rupture
+    Pool to 70% Energy if 4 Impacable stacks
+    Envenom
+CT to spread bleeds
+FoK on 3 targets, 2 targets with Thrown Precision
 Mutilate
 
+# Vanish
+If short fight (< 4 min) Vanish to extend opener Imp Garrotes
+Otherwise hold Vanish and sync with Deathmark
+
 # Notes
-Pot ASAP if fight is 5-5:30, otherwise line up with Lust/DM
-Save energy for 2-3 sec before KB if below 50% energy
-Snipe Rupture onto an add whenever below 50% energy while in a 1-2 target situation before the add dies
-Fight ending:
-- Dump tea & shiv charges
-- Garrote may expire during final 12 sec
-- Rupture may expire during final 9 sec
-If Master Assassin becomes good, line it up with end of DM
-Shiv when KB buff icon says "8". If Shiv expires before KB, that was too early
+Ignore bleeds if boss dies in 12 sec

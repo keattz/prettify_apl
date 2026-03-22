@@ -1,0 +1,44 @@
+# precombat
+adrenaline_rush,precombat_seconds = 1 if 1
+slice_and_dice,precombat_seconds = 1 if 1
+roll_the_bones,precombat_seconds = 0 if loaded_dice.up
+
+# actions
+var ambush_condition = (0 | cp.deficit >= 2 + 0) & energy >= 50
+var finish_condition = cp >= cp_max_spend - 1 - (hero_tree.fatebound & !between_the_eyes.ready)
+var blade_flurry_sync = targets.blade_flurry < 2 & raid_event.adds.in > 20 | blade_flurry.up
+call_action_list.cds
+run_action_list,name = finish if finish_condition
+call_action_list.build
+
+# build
+ambush if 0 & audacity.up
+blade_flurry if 1 & targets >= 4
+coup_de_grace if disorienting_strikes.up
+pistol_shot if 0 & 0 & opportunity.up & !audacity.up
+pistol_shot if 1 & opportunity.up & (opportunity.stack >= opportunity.max_stack | opportunity.remains < 2)
+pistol_shot if 1 & opportunity.up & (cp.deficit >= (1 + 1 + (1 * 1)) & (cp > 1 | rtb_buffs < 2 | !talent.deal_fate))
+pistol_shot if 0 & opportunity.up & (energy.base_deficit > energy.regen * 1.5 | cp.deficit <= 1 | 1 | 0 & !audacity.up)
+ambush if 0
+sinister_strike
+
+# cds
+adrenaline_rush if !adrenaline_rush.up & (!finish_condition | 0) & (raid_event.adds.remains > 5 | raid_event.adds.in < 5 | !raid_event.adds.exists | !raid_event.adds.count)
+blade_flurry if targets >= 2 & blade_flurry.remains < gcd
+preparation if adrenaline_rush.cooldown > 30 & !between_the_eyes.ready & (!killing_spree.ready | !hero_tree.trickster) | fight_remains < 30
+keep_it_rolling if rtb_buffs = 2 & roll_the_bones.remains < adrenaline_rush.cooldown & !loaded_dice.up & (preparation.cooldown | !talent.preparation) | rtb_buffs >= 3
+roll_the_bones if !roll_the_bones.up | rtb_buffs = 1
+blade_rush if set_bonus.mid1_4pc & !whirl_of_blades.up | targets = 1 & energy.base_time_to_max > 2 | targets >= 2
+vanish if !finish_condition & 0 & !audacity.up & !opportunity.up
+shadowmeld if !finish_condition & 0 & !audacity.up & !opportunity.up
+potion if bloodlust.react | fight_remains < 30 | adrenaline_rush.up
+use_items,slots = trinket1 if between_the_eyes.up | trinket.1.has_stat.any_dps | fight_remains <= 20
+use_items,slots = trinket2 if between_the_eyes.up | trinket.2.has_stat.any_dps | fight_remains <= 20
+
+# finish
+dispatch if !slice_and_dice.up
+between_the_eyes if adrenaline_rush.cooldown > 30 | adrenaline_rush.up | 0 | !talent.zero_in
+killing_spree
+coup_de_grace
+dispatch
+

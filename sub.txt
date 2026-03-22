@@ -1,46 +1,27 @@
-# Opener
-SS -> Pot + Flag -> ...
+# Rotation
 
-# Cooldowns
-(5+ CP) Flag -> Finish -> (Dance Symbols) BS -> (SB Trinket) SecTec -> ...
-CB SecTec during 2nd Flag
-Vanish+SS when done dancing
-Symbols if sectec.cooldown < 8 and (0 cp or 7 cp)
-Dance with Symbols
+Shadow Blades
+Dance when SecTec ready
+Vanish -> Shadowstrike
 
-# During Dance
-finish on 6 cp:
-	sectec
-	coup_de_grace if fazed
-	powder on 4+ targets
-	eviscerate
-build:
-	backstab if premed
-	shuriken_storm once if 7+ targets
-	shadowstrike
+Shadowstrike for AA optimization on 1-4 targets
+Finish on 6 CP:
+    SecTec
+    Coup
+    Black Powder if 3+ targets, 2 targets with Potent Powder
+    Eviscerate
+Build if Dance or 60 Energy:
+    Shadowstrike if 1-3 targets
+    Shuriken Storm if 2+ targets
+    Backstab
 
-# Outside Dance
-finish on 6 cp:
-	sectec during symbols
-	rupture
-	coup_de_grace if fazed
-	powder on 3+ targets 
-	eviscerate
-build:
-	backstab if flawless_form down
-	shuriken_storm if 3+ targets
-	backstab
+# Dance
+Trickster prefers high CP (SecTec), DS prefers low CP (Storm)
+Hold Dance if Shadow Blades cooldown < 9
+Dance twice in Blades - 1 gcd gap for high/low CP preferences is good
+Dance is affected by lag, x.4-x.5 feels necessary
 
 # Notes
-During SB, if 4set buff up, build with Shuriken Storm
-Flag:
-	Don't Symbols if Flag cooldown < 30
-	Don't Coup if Flag cooldown < 20 (spam powder)
-	Don't Eviscerate if Flag cooldown < 10 (rupture if needed, otherwise just build)
-Symbols:
-	Always want to Supercharge SecTec
-	Use Symbols right after getting resurrected for free prepull supercharged cp
-	Can use Symbols during long downtime
-Can't Coup->Vanish
-Rupture may fall off during final 6 sec
-On fights where I have to hold cds a lil, I can reliably get a "dry CB"
+Haste trinkets must be pressed BEFORE Dance to get snapshot
+Hold CP for Dance+SecTec up to 3 sec
+Might be some dry SecTec opportunities with high haste
