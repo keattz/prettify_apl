@@ -13,7 +13,7 @@ call_action_list.build
 
 # build
 ambush if 0 & audacity.up
-blade_flurry if 1 & targets >= 4
+blade_flurry if 1 & targets >= 3
 coup_de_grace if disorienting_strikes.up
 pistol_shot if 0 & 0 & opportunity.up & !audacity.up
 pistol_shot if 1 & opportunity.up & (opportunity.stack >= opportunity.max_stack | opportunity.remains < 2)

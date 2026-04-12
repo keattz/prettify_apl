@@ -6,44 +6,47 @@ slice_and_dice,precombat_seconds = 1
 # actions
 var single_target = targets = 1
 thistle_tea if energy.pct < 50 & fight_remains < 10
+ambush if stealthed.rogue & single_target & 1 & talent.improved_ambush & !talent.shrouded_suffocation
 call_action_list.cds
 call_action_list.core_dot
-call_action_list.generate if !0 & cp < 5 | 0 & cp.deficit > 0 | (0 & targets >= 5 & (active_garrote < targets | active_rupture < targets))
+call_action_list.generate if !0 & cp < 5 | 0 & cp.deficit > 0
 call_action_list.spend if !0 & cp >= 5 | 0 & cp.deficit = 0
 
 # cds
-deathmark if garrote.ticking & rupture.ticking & kingsbane.cooldown <= 2 & envenom.up
+deathmark if garrote.ticking & rupture.ticking & kingsbane.cooldown <= 2 & envenom.remains > 2 & (time_to_die > 10 | fight_remains < 20)
 call_action_list.items
 call_action_list.misc_cds
-kingsbane if garrote.ticking & rupture.ticking & (deathmark.ticking | deathmark.cooldown > 52)
+kingsbane if garrote.ticking & rupture.ticking & (deathmark.ticking | deathmark.cooldown > 52) & envenom.up & (time_to_die > 10 | fight_remains < 20)
 call_action_list.vanish if !stealthed.rogue
 
 # core_dot
 garrote if (improved_garrote.up | stealthed.rogue) & (pmultiplier <= 1 | remains <= 14 + 6 * 1 + 4 * !single_target)
 garrote if cp.deficit >= 1 & (pmultiplier <= 1 | !single_target) & refreshable & time_to_die - remains > 12
+garrote,cycle_targets = 1 if 1 & cp.deficit >= 1 & (pmultiplier <= 1 | !single_target) & refreshable & time_to_die - remains > 12
 rupture if cp >= 5 & refreshable & time_to_die - remains > 12 & (!0 | !rupture.ticking)
+rupture,cycle_targets = 1 if 1 & cp >= 5 & refreshable & time_to_die - remains > 12 & (!0 | !rupture.ticking)
 
 # generate
-crimson_tempest if !single_target & (active_garrote < targets | active_rupture < targets)
+crimson_tempest,target_if = max:rupture.remains if !single_target & (active_garrote < targets | active_rupture < targets) & (rupture.remains > 5 | energy.regen_combined > 40)
 shiv if 0 & cp.deficit = 1 & targets <= 3 & 1
 ambush if targets <= 1 + 1
 mutilate if targets <= 1 + 1
 fan_of_knives if targets > 1 + 1
 
 # items
-var base_trinket_condition = rupture.ticking & deathmark.cooldown < 2 & !deathmark.ready | deathmark.ticking | fight_remains <= 22
+var base_trinket_condition = rupture.ticking & deathmark.cooldown < 2 | deathmark.ticking | fight_remains <= 22
 use_item,name = astral_gladiators_badge_of_ferocity,use_off_gcd = 1 if kingsbane.ticking | deathmkark.ticking | (kingsbane.cooldown > 60 | deathmark.cooldown > 60)
 use_items,slots = trinket1 if (trinket_sync_slot = 1 & (deathmark.up) | (trinket_sync_slot = 2 & !trinket.2.cooldown.ready & deathmark.cooldown > 20)) | !trinket_sync_slot | fight_remains <= 20
 use_items,slots = trinket2 if (trinket_sync_slot = 2 & (deathmark.up) | (trinket_sync_slot = 1 & !trinket.1.cooldown.ready & deathmark.cooldown > 20)) | !trinket_sync_slot | fight_remains <= 20
 
 # misc_cds
-potion if bloodlust.react | fight_remains < 30 | deathmark.up
+potion if rupture.ticking & (bloodlust.react | fight_remains < 30 | deathmark.up)
 
 # spend
 envenom if implacable_tracker.stack < 4
-envenom if energy.pct > 70
+envenom if energy.pct > 70 | fight_remains < 15
 
 # vanish
-vanish if single_target & 1 & garrote.pmultiplier <= 1 & !deathmark.ready & !raid_event.adds.in <= 30
+vanish if single_target & 1 & garrote.pmultiplier <= 1 & (deathmark.ticking | deathmark.cooldown > time_to_die - 10) & !raid_event.adds.in <= 30
 vanish if !single_target & 1 & garrote.pmultiplier <= 1 & (raid_event.adds.remains >= 10 | !raid_event.adds.in <= 30)
 
