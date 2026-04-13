@@ -1,0 +1,74 @@
+# precombat
+var trinket_1_mastery = trinket.1.has_use_buff & trinket.1.has_mastery
+var trinket_2_mastery = trinket.2.has_use_buff & trinket.2.has_mastery
+var trinket_1_buffs = trinket.1.has_intellect | trinket.1.has_mastery | trinket.1.has_versatility | trinket.1.has_haste | trinket.1.has_crit
+var trinket_2_buffs = trinket.2.has_intellect | trinket.2.has_mastery | trinket.2.has_versatility | trinket.2.has_haste | trinket.2.has_crit
+var weapon_buffs = 0
+variable,name = weapon_sync,op = setif,value = 1,value_else = 0.5,condition = 0
+var weapon_stat_value = 0
+var trinket_1_manual = 0
+var trinket_2_manual = 0
+var trinket_1_ogcd_cast = 0
+var trinket_2_ogcd_cast = 0
+var trinket_1_exclude = 0
+var trinket_2_exclude = 0
+variable,name = trinket_priority,op = setif,value = 2,value_else = 1,condition = !trinket_1_buffs & trinket_2_buffs | trinket_2_buffs & ((trinket.2.proc.any_dps.duration) * trinket.2.proc.any_dps.default_value) > ((trinket.1.proc.any_dps.duration) * trinket.1.proc.any_dps.default_value)
+variable,name = trinket_priority,op = setif if weapon_buffs,value = 3,value_else = trinket_priority,condition = !trinket_1_buffs & !trinket_2_buffs | weapon_stat_value > (((trinket.2.proc.any_dps.duration) * trinket.2.proc.any_dps.default_value) <? ((trinket.1.proc.any_dps.duration) * trinket.1.proc.any_dps.default_value))
+variable,name = damage_trinket_priority,op = setif,value = 2,value_else = 1,condition = !trinket_1_buffs & !trinket_2_buffs & trinket.2.ilvl >= trinket.1.ilvl
+variable,name = should_use_star,default = 0,value = 0,op = reset
+variable,name = melee_vs,op = set,value = 0 & 0 & !apex.1
+variable,name = ray_after_reap,default = 0,value = 0,op = reset
+variable,name = wont_overcap_cstar,default = 0,value = 0,op = reset
+consume
+
+# actions
+call_action_list.math_for_wizards
+call_action_list.illicit_doping
+void_ray if 1 & active_enemies > 1 & !eradicate.up & 0
+voidblade if void_metamorphosis_stack.at_max_stacks & 1 & 0
+the_hunt if void_metamorphosis_stack.at_max_stacks & 1 & 0
+metamorphosis if eradicate.up | 0 | active_enemies = 1 | 1
+call_action_list.reaps if talent.moment_of_craving & action.reap.souls_consumed >= 4 & metamorphosis.up & 0 & void_ray.cooldown <= gcd.max & wont_overcap_cstar
+void_ray if !eradicate.up | active_enemies = 1
+pierce_the_veil if moment_of_craving.up & should_use_star & collapsing_star_stacking.stack >= 30 & 1
+collapsing_star if should_use_star
+call_action_list.reaps if eradicate.up & active_enemies > 1 & action.reap.souls_consumed >= 4 + 6 * moment_of_craving.up
+call_action_list.melee_combo
+call_action_list.reaps if !metamorphosis.up & moment_of_craving.up & 1 & (voidfall_building.react < 2 | ray_after_reap)
+call_action_list.reaps if voidfall_spending.stack >= 3 & prev_gcd.1.void_ray | voidfall_spending.react >= 3
+call_action_list.reaps if metamorphosis.up & should_use_star & (collapsing_star_stacking.stack + action.reap.souls_consumed) >= 30 & wont_overcap_cstar & void_metamorphosis_base_drain_ps > 35
+call_action_list.reaps if 0 & active_enemies = 1 & !metamorphosis.up & ray_after_reap
+call_action_list.reaps if 0 & (metamorphosis.up & (active_enemies = 1 | eradicate.up | 0) | moment_of_craving.up | !talent.moment_of_craving & action.reap.souls_consumed >= 4) & wont_overcap_cstar
+soul_immolation if active_soul_immolation = 0 & !metamorphosis.up
+devour
+consume
+
+# illicit_doping
+potion if metamorphosis.up & void_metamorphosis_base_drain_ps < 30 & (!trinket_1_mastery & !trinket_2_mastery | stat.mastery_rating > stat.haste_rating | trinket_1_mastery & trinket.1.cooldown.remains >= 30 | trinket_2_mastery & trinket.2.cooldown.remains >= 30) | fight_remains <= 30
+use_item,slot = trinket1 if metamorphosis.up & void_metamorphosis_base_drain_ps < 30 & (!trinket.2.has_cooldown | trinket.2.cooldown.remains | trinket_priority = 1 | trinket_2_exclude) & !trinket_1_manual | trinket.1.proc.any_dps.duration >= fight_remains | fight_remains <= trinket.1.any_dps.duration
+use_item,slot = trinket2 if metamorphosis.up & void_metamorphosis_base_drain_ps < 30 & (!trinket.1.has_cooldown | trinket.1.cooldown.remains | trinket_priority = 2 | trinket_1_exclude) & !trinket_2_manual | trinket.2.proc.any_dps.duration >= fight_remains | fight_remains <= trinket.2.any_dps.duration
+use_item,slot = main_hand if weapon_buffs & (trinket_2_buffs & (trinket.2.cooldown.remains | trinket.2.cooldown.duration <= 20) | !trinket_2_buffs | trinket_2_exclude | trinket_priority = 3) & (trinket_1_buffs & (trinket.1.cooldown.remains | trinket.1.cooldown.duration <= 20) | !trinket_1_buffs | trinket_1_exclude | trinket_priority = 3)
+use_item,use_off_gcd = 1,slot = trinket1 if !trinket_1_buffs & !trinket_1_manual & (damage_trinket_priority = 1 | trinket.2.cooldown.remains | trinket.2.is.spymasters_web | trinket.2.cooldown.duration = 0) & (gcd.remains > 0.1)
+use_item,use_off_gcd = 1,slot = trinket2 if !trinket_2_buffs & !trinket_2_manual & (damage_trinket_priority = 2 | trinket.1.cooldown.remains | trinket.1.is.spymasters_web | trinket.1.cooldown.duration = 0) & (gcd.remains > 0.1)
+use_item,slot = trinket1 if !trinket_1_buffs & !trinket_1_manual & (damage_trinket_priority = 1 | trinket.2.cooldown.remains | trinket.2.is.spymasters_web | trinket.2.cooldown.duration = 0) & (!trinket_1_ogcd_cast)
+use_item,slot = trinket2 if !trinket_2_buffs & !trinket_2_manual & (damage_trinket_priority = 2 | trinket.1.cooldown.remains | trinket.1.is.spymasters_web | trinket.1.cooldown.duration = 0) & (!trinket_2_ogcd_cast)
+
+# math_for_wizards
+variable,name = should_use_star,op = set,value = (active_enemies > 1 | apex.1 | dark_matter.up | 1) & !melee_vs if 1
+variable,name = wont_overcap_cstar,op = set,value = (collapsing_star_stacking.stack + action.reap.souls_consumed) <= collapsing_star_stacking.max_stack | !should_use_star
+variable,name = ray_after_reap,op = set,value = fury + 4 * action.reap.souls_consumed + 10 * 1 >= 100
+
+# melee_combo
+vengeful_retreat if voidstep.up & (collapsing_star_stacking.stack < 30 | cooldown.voidblade.up | cooldown.predators_wake.up | collapsing_star_stacking.stack <= 38)
+hungering_slash if active_enemies > 1
+reapers_toll if voidsurge_reapers_toll.up | active_enemies > 1
+the_hunt if 1 & 0 | 1 & 1 & metamorphosis.up
+pierce_the_veil if voidsurge_pierce_the_veil.up | 0 & active_enemies = 1 | 1 | 0 & active_enemies > 1
+predators_wake
+voidblade if (0 & active_enemies = 1 | 0 & active_enemies > 1) & 0 | 1 & 1 & metamorphosis.up
+
+# reaps
+eradicate
+cull
+reap
+

@@ -1,0 +1,18 @@
+Maintain DoTs and Festering Scythe
+Army
+DT
+
+putrefy if 2 charges
+soul_reaper
+putrefy if DT.up
+death_coil if sudden_doom | 6+ targets | rune < 2 | forbidden_knowledge.up & rune < 4
+putrefy if commander_of_the_dead.remains > 9
+
+festering_strike if lesser_ghoul_ready.stack = 0
+scourge_strike if lesser_ghoul_ready.stack >= 1
+death_coil
+
+# Notes
+Epidemic > Necrotic Coil on 6+ targets (-1 if Whitemane active)
+Epidemic > Death Coil on 4+ targets (-1 if Whitemane active)
+Avoding Putrefy during execute, unless 2 stacks, or if fight ending

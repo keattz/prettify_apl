@@ -1,0 +1,118 @@
+# precombat
+berserker_stance,toggle = on
+var trinket_1_exclude = trinket.1.is.algethar_puzzle_box
+var trinket_2_exclude = trinket.2.is.algethar_puzzle_box
+var trinket_1_buffs = trinket.1.has_use_buff
+var trinket_2_buffs = trinket.2.has_use_buff
+variable,name = trinket_1_duration,op = setif,value = 0,value_else = trinket.1.proc.any_dps.duration,condition = 0
+variable,name = trinket_2_duration,op = setif,value = 0,value_else = trinket.2.proc.any_dps.duration,condition = 0
+variable,name = trinket_1_high_value,op = setif,value = 2,value_else = 1,condition = trinket.1.is.treacherous_transmitter
+variable,name = trinket_2_high_value,op = setif,value = 2,value_else = 1,condition = trinket.2.is.treacherous_transmitter
+variable,name = trinket_1_sync,op = setif,value = 1,value_else = 0.5,condition = trinket_1_buffs & talent.recklessness & trinket.1.cooldown.duration%%cooldown.recklessness.duration = 0
+variable,name = trinket_2_sync,op = setif,value = 1,value_else = 0.5,condition = trinket_2_buffs & talent.recklessness & trinket.2.cooldown.duration%%cooldown.recklessness.duration = 0
+variable,name = trinket_priority,op = setif,value = 2,value_else = 1,condition = !trinket_1_buffs & trinket_2_buffs & (trinket.2.has_cooldown | !trinket.1.has_cooldown) | trinket_2_buffs & ((trinket.2.cooldown.duration%trinket_2_duration) * (1.5 + trinket.2.has_strength) * (trinket_2_sync) * (trinket_2_high_value) * (1 + ((trinket.2.ilvl - trinket.1.ilvl)%100))) > ((trinket.1.cooldown.duration%trinket_1_duration) * (1.5 + trinket.1.has_strength) * (trinket_1_sync) * (trinket_1_high_value) * (1 + ((trinket.1.ilvl - trinket.2.ilvl)%100)))
+variable,name = damage_trinket_priority,op = setif,value = 2,value_else = 1,condition = !trinket_1_buffs & !trinket_2_buffs & trinket.2.ilvl >= trinket.1.ilvl
+var trinket_1_manual = trinket.1.is.algethar_puzzle_box
+var trinket_1_manual = trinket.2.is.algethar_puzzle_box
+
+# actions
+auto_attack
+charge if time <= 0.5 | movement.distance > 5
+heroic_leap if (raid_event.movement.distance > 25 & raid_event.movement.in > 45)
+potion if time_to_die > 300 | recklessness.up | time_to_die < 25
+pummel if target.casting.react
+call_action_list.trinkets
+call_action_list.variables
+run_action_list,name = slayer if 0 & active_enemies = 1
+run_action_list,name = slayer_aoe if 0 & active_enemies > 1
+run_action_list,name = thane if 1 & active_enemies = 1
+run_action_list,name = thane_aoe if 1 & active_enemies > 1
+
+# slayer
+recklessness
+avatar
+rampage if enrage.remains < gcd | rage >= 100
+bladestorm if (enrage.up & talent.deft_experience | enrage.remains > 1) & (recklessness.up | recklessness.cooldown > 30)
+odyns_fury
+bloodbath
+rampage if recklessness.up
+execute
+crushing_blow
+bloodthirst
+rampage
+wrecking_throw
+rend if rend.duration < 6
+raging_blow
+whirlwind
+storm_bolt if bladestorm.up
+
+# slayer_aoe
+whirlwind if talent.improved_whirlwind & whirlwind.stack = 0
+recklessness
+avatar
+rampage if enrage.remains < gcd | rage >= 110
+bladestorm if (enrage.up & talent.deft_experience | enrage.remains > 1) & (recklessness.up | recklessness.cooldown > 10)
+odyns_fury
+bloodbath
+execute if sudden_death.up
+rampage if recklessness.up
+whirlwind if talent.improved_whirlwind & recklessness.up
+crushing_blow
+bloodthirst
+rend if rend_duration < 6
+execute
+rampage
+whirlwind if talent.improved_whirlwind
+raging_blow
+storm_bolt if bladestorm.up
+
+# thane
+odyns_fury
+recklessness
+avatar
+rampage if enrage.remains < gcd | rage >= 100
+thunder_blast if thunder_blast.stack = 2
+bloodbath
+rampage if recklessness.up
+thunder_blast if avatar.up
+bloodthirst
+execute
+crushing_blow
+thunder_blast
+rampage
+raging_blow
+thunder_clap
+whirlwind
+
+# thane_aoe
+odyns_fury
+recklessness
+avatar
+thunder_blast if thunder_blast.stack = 2
+thunder_blast if avatar.up
+thunder_clap if talent.improved_whirlwind & whirlwind.stack = 0 | (avatar.up & active_enemies > 6)
+rampage if enrage.remains < gcd | rage >= 100
+bloodbath
+rampage if recklessness.up
+thunder_clap if avatar.up
+bloodthirst
+thunder_blast
+execute
+thunder_clap
+crushing_blow
+rampage
+raging_blow
+whirlwind
+
+# trinkets
+use_item,slot = trinket1 if trinket_1_buffs & (trinket_priority = 1 | !trinket_2_buffs | !trinket.2.has_cooldown) & (recklessness.up)
+use_item,slot = trinket2 if trinket_2_buffs & (trinket_priority = 2 | !trinket_1_buffs | !trinket.1.has_cooldown) & (recklessness.up)
+use_item,slot = trinket1 if !trinket_1_buffs & (damage_trinket_priority = 1 | !trinket_2_buffs | !trinket.2.has_cooldown)
+use_item,slot = trinket2 if !trinket_2_buffs & (damage_trinket_priority = 2 | !trinket_1_buffs | !trinket.1.has_cooldown)
+
+# variables
+var st_planning = active_enemies = 1 & (raid_event.adds.in > 15 | !raid_event.adds.exists)
+var adds_remain = active_enemies >= 2 & (!raid_event.adds.exists | raid_event.adds.exists & raid_event.adds.remains > 5)
+var execute_phase = (talent.massacre.enabled & target.health.pct < 35) | target.health.pct < 20
+var on_gcd_racials = recklessness.down & recklessness.down & rage < 80 & sudden_death.down & !bladestorm.ready & (!execute.ready | !execute_phase)
+

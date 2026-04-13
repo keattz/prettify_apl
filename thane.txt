@@ -1,0 +1,45 @@
+# mixed
+odyns_fury
+recklessness
+avatar
+if aoe:
+    thunder_blast if thunder_blast.stack = 2
+    thunder_blast if avatar.up
+    thunder_clap if talent.improved_whirlwind & whirlwind.stack = 0 | (avatar.up & active_enemies > 6)
+rampage if enrage.remains < gcd | rage >= 100
+thunder_blast if thunder_blast.stack = 2
+bloodbath
+rampage if recklessness.up
+thunder_clap if avatar.up
+bloodthirst
+if aoe:
+    thunder_blast
+execute
+if aoe:
+    thunder_clap
+crushing_blow
+if st:
+    thunder_blast
+rampage
+raging_blow
+if st:
+    thunder_clap
+whirlwind
+
+# st
+odyns_fury
+recklessness
+avatar
+rampage if enrage.remains < gcd | rage >= 100
+thunder_blast if thunder_blast.stack = 2
+bloodbath
+rampage if recklessness.up
+thunder_clap if avatar.up
+bloodthirst
+execute
+crushing_blow
+thunder_blast
+rampage
+raging_blow
+thunder_clap
+whirlwind
