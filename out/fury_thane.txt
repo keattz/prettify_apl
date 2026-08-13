@@ -30,19 +30,25 @@ run_action_list,name = thane_aoe if 1 & active_enemies > 1
 
 # slayer
 recklessness
-avatar
-rampage if enrage.remains < gcd | rage >= 100
-bladestorm if (enrage.up & talent.deft_experience | enrage.remains > 1) & (recklessness.up | recklessness.cooldown > 30)
-odyns_fury
-bloodbath
-rampage if recklessness.up
-execute
+rampage if enrage.remains < gcd
+rampage if recklessness.up & rage >= 100
+rampage if recklessness.up & bladestorm.ready
+bladestorm if recklessness.up | time_to_die <= 5
+execute if recklessness.up & sudden_death.up
+rampage if recklessness.up & !hack_and_slash.up
 crushing_blow
-bloodthirst
-rampage
-wrecking_throw
-rend if rend.duration < 6
+odyns_fury if recklessness.up
+execute if recklessness.up
+bloodbath
+odyns_fury if recklessness.up
+rampage if rage > 100
+execute
+execute if sudden_death.up
+odyns_fury
+execute
 raging_blow
+rampage
+bloodthirst
 whirlwind
 storm_bolt if bladestorm.up
 
@@ -50,57 +56,61 @@ storm_bolt if bladestorm.up
 whirlwind if talent.improved_whirlwind & whirlwind.stack = 0
 recklessness
 avatar
-rampage if enrage.remains < gcd | rage >= 110
-bladestorm if (enrage.up & talent.deft_experience | enrage.remains > 1) & (recklessness.up | recklessness.cooldown > 10)
-odyns_fury
-bloodbath
-execute if sudden_death.up
-rampage if recklessness.up
-whirlwind if talent.improved_whirlwind & recklessness.up
-crushing_blow
-bloodthirst
-rend if rend_duration < 6
-execute
 rampage
-whirlwind if talent.improved_whirlwind
+bladestorm if recklessness.up | time_to_die <= 5
+execute if sudden_death.up
+odyns_fury
+crushing_blow
+bloodbath
+execute
 raging_blow
+bloodthirst
+whirlwind
 storm_bolt if bladestorm.up
 
 # thane
-odyns_fury
 recklessness
 avatar
 rampage if enrage.remains < gcd | rage >= 100
-thunder_blast if thunder_blast.stack = 2
+bloodbath if recklessness.up & fury_mid2_4pc_crit.stack < 2
+thunder_blast if thunder_blast.stack = 2 | avatar.remains < 2 | thunder_blast.remains < 2
+crushing_blow if hack_and_slash.up
 bloodbath
 rampage if recklessness.up
 thunder_blast if avatar.up
-bloodthirst
-execute
 crushing_blow
+raging_blow if hack_and_slash.up
 thunder_blast
 rampage
+bloodthirst
+execute if talent.deep_wounds
 raging_blow
+odyns_fury
+thunder_clap if avatar.up & !talent.wrath_and_fury
+execute
 thunder_clap
-whirlwind
 
 # thane_aoe
 odyns_fury
 recklessness
 avatar
+rampage if !enrage.up
+thunder_blast
 thunder_blast if thunder_blast.stack = 2
 thunder_blast if avatar.up
 thunder_clap if talent.improved_whirlwind & whirlwind.stack = 0 | (avatar.up & active_enemies > 6)
 rampage if enrage.remains < gcd | rage >= 100
 bloodbath
+crushing_blow if hack_and_slash.up
 rampage if recklessness.up
 thunder_clap if avatar.up
+crushing_blow
 bloodthirst
 thunder_blast
+raging_blow if hack_and_slash.up
 execute
-thunder_clap
-crushing_blow
 rampage
+thunder_clap
 raging_blow
 whirlwind
 

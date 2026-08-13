@@ -1,74 +1,178 @@
 # precombat
-var trinket_1_mastery = trinket.1.has_use_buff & trinket.1.has_mastery
-var trinket_2_mastery = trinket.2.has_use_buff & trinket.2.has_mastery
 var trinket_1_buffs = trinket.1.has_intellect | trinket.1.has_mastery | trinket.1.has_versatility | trinket.1.has_haste | trinket.1.has_crit
 var trinket_2_buffs = trinket.2.has_intellect | trinket.2.has_mastery | trinket.2.has_versatility | trinket.2.has_haste | trinket.2.has_crit
-var weapon_buffs = 0
-variable,name = weapon_sync,op = setif,value = 1,value_else = 0.5,condition = 0
-var weapon_stat_value = 0
-var trinket_1_manual = 0
-var trinket_2_manual = 0
+var trinket_1_manual = trinket.1.is.font_of_venomous_rage
+var trinket_2_manual = trinket.2.is.font_of_venomous_rage
 var trinket_1_ogcd_cast = 0
 var trinket_2_ogcd_cast = 0
 var trinket_1_exclude = 0
 var trinket_2_exclude = 0
 variable,name = trinket_priority,op = setif,value = 2,value_else = 1,condition = !trinket_1_buffs & trinket_2_buffs | trinket_2_buffs & ((trinket.2.proc.any_dps.duration) * trinket.2.proc.any_dps.default_value) > ((trinket.1.proc.any_dps.duration) * trinket.1.proc.any_dps.default_value)
-variable,name = trinket_priority,op = setif if weapon_buffs,value = 3,value_else = trinket_priority,condition = !trinket_1_buffs & !trinket_2_buffs | weapon_stat_value > (((trinket.2.proc.any_dps.duration) * trinket.2.proc.any_dps.default_value) <? ((trinket.1.proc.any_dps.duration) * trinket.1.proc.any_dps.default_value))
 variable,name = damage_trinket_priority,op = setif,value = 2,value_else = 1,condition = !trinket_1_buffs & !trinket_2_buffs & trinket.2.ilvl >= trinket.1.ilvl
-variable,name = should_use_star,default = 0,value = 0,op = reset
-variable,name = melee_vs,op = set,value = 0 & 0 & !apex.1
-variable,name = ray_after_reap,default = 0,value = 0,op = reset
-variable,name = wont_overcap_cstar,default = 0,value = 0,op = reset
+soul_immolation
 consume
 
 # actions
-call_action_list.math_for_wizards
-call_action_list.illicit_doping
-void_ray if 1 & active_enemies > 1 & !eradicate.up & 0
-voidblade if void_metamorphosis_stack.at_max_stacks & 1 & 0
-the_hunt if void_metamorphosis_stack.at_max_stacks & 1 & 0
-metamorphosis if eradicate.up | 0 | active_enemies = 1 | 1
-call_action_list.reaps if talent.moment_of_craving & action.reap.souls_consumed >= 4 & metamorphosis.up & 0 & void_ray.cooldown <= gcd.max & wont_overcap_cstar
-void_ray if !eradicate.up | active_enemies = 1
-pierce_the_veil if moment_of_craving.up & should_use_star & collapsing_star_stacking.stack >= 30 & 1
-collapsing_star if should_use_star
+call_action_list.variables
+call_action_list.cooldowns
+run_action_list,name = annihilator_melee if hero_tree.annihilator & 0
+run_action_list,name = annihilator_ranged if hero_tree.annihilator
+run_action_list,name = voidscarred_ranged if hero_tree.voidscarred & 1
+run_action_list,name = voidscarred_melee if hero_tree.voidscarred & 0
+
+# annihilator_melee
+metamorphosis if (eradicate.up | 0 | active_enemies = 1 | 1) & (active_enemies > 1 | moment_of_craving.up | void_ray.cooldown > 6)
+devour if soulburst.up
+consume if soulburst.up
+void_ray if 1 & active_enemies > 1 & !eradicate.up
+collapsing_star if active_enemies = 1 & (apex.1 | dark_matter.up | 1)
+the_hunt if metamorphosis.up
+hungering_slash if !metamorphosis.up & soul_fragments <= 8
+reapers_toll if !metamorphosis.up & soul_fragments <= 8
+vengeful_retreat if 1 & voidstep.up
+hungering_slash if active_enemies > 1
+reapers_toll if 1 & (voidsurge_reapers_toll.up | active_enemies > 1)
+voidblade if metamorphosis.up
+voidblade if !metamorphosis.up & (active_enemies = 1 | 0 & active_enemies < 4)
+call_action_list.reaps if active_enemies = 1 & action.reap.souls_consumed >= 4
+call_action_list.reaps if 0 & (active_enemies > 1 & wont_overcap_cstar & set_bonus.midnight_season_2_4pc & (voidfall_spending.stack >= 3 & prev_gcd.1.void_ray | voidfall_spending.react >= 3))
+call_action_list.reaps if action.reap.souls_consumed >= 4 & active_enemies < 5 & (active_enemies > 1 | !metamorphosis.up | moment_of_craving.up | collapsing_star_stacking.stack + action.reap.souls_consumed >= 30 | void_metamorphosis_base_drain_ps > 35)
+call_action_list.reaps if fight_remains <= 6 & action.reap.souls_consumed >= 1
+call_action_list.reaps if 1 & active_enemies > 1 & eradicate.up & action.reap.souls_consumed >= 1
+void_ray if !eradicate.up | !moment_of_craving.up | set_bonus.midnight_season_2_4pc
+collapsing_star if active_enemies > 1
 call_action_list.reaps if eradicate.up & active_enemies > 1 & action.reap.souls_consumed >= 4 + 6 * moment_of_craving.up
-call_action_list.melee_combo
-call_action_list.reaps if !metamorphosis.up & moment_of_craving.up & 1 & (voidfall_building.react < 2 | ray_after_reap)
-call_action_list.reaps if voidfall_spending.stack >= 3 & prev_gcd.1.void_ray | voidfall_spending.react >= 3
-call_action_list.reaps if metamorphosis.up & should_use_star & (collapsing_star_stacking.stack + action.reap.souls_consumed) >= 30 & wont_overcap_cstar & void_metamorphosis_base_drain_ps > 35
-call_action_list.reaps if 0 & active_enemies = 1 & !metamorphosis.up & ray_after_reap
-call_action_list.reaps if 0 & (metamorphosis.up & (active_enemies = 1 | eradicate.up | 0) | moment_of_craving.up | !talent.moment_of_craving & action.reap.souls_consumed >= 4) & wont_overcap_cstar
-soul_immolation if active_soul_immolation = 0 & !metamorphosis.up
+call_action_list.reaps if 0 & (active_enemies > 1 & !metamorphosis.up & moment_of_craving.up & 1 & (voidfall_building.react < 2 | ray_after_reap))
+call_action_list.reaps if 0 & (active_enemies > 1 & (voidfall_spending.stack >= 3 & prev_gcd.1.void_ray | voidfall_spending.react >= 3))
+call_action_list.reaps if active_enemies > 1 & metamorphosis.up & 1 & (active_enemies > 1 | apex.1 | dark_matter.up | 1) & collapsing_star_stacking.stack + action.reap.souls_consumed >= 30 & wont_overcap_cstar & void_metamorphosis_base_drain_ps > 35
+soul_immolation if active_soul_immolation = 0 & (!metamorphosis.up | fury < void_metamorphosis_base_drain_ps)
 devour
 consume
 
-# illicit_doping
-potion if metamorphosis.up & void_metamorphosis_base_drain_ps < 30 & (!trinket_1_mastery & !trinket_2_mastery | stat.mastery_rating > stat.haste_rating | trinket_1_mastery & trinket.1.cooldown.remains >= 30 | trinket_2_mastery & trinket.2.cooldown.remains >= 30) | fight_remains <= 30
-use_item,slot = trinket1 if metamorphosis.up & void_metamorphosis_base_drain_ps < 30 & (!trinket.2.has_cooldown | trinket.2.cooldown.remains | trinket_priority = 1 | trinket_2_exclude) & !trinket_1_manual | trinket.1.proc.any_dps.duration >= fight_remains | fight_remains <= trinket.1.any_dps.duration
-use_item,slot = trinket2 if metamorphosis.up & void_metamorphosis_base_drain_ps < 30 & (!trinket.1.has_cooldown | trinket.1.cooldown.remains | trinket_priority = 2 | trinket_1_exclude) & !trinket_2_manual | trinket.2.proc.any_dps.duration >= fight_remains | fight_remains <= trinket.2.any_dps.duration
-use_item,slot = main_hand if weapon_buffs & (trinket_2_buffs & (trinket.2.cooldown.remains | trinket.2.cooldown.duration <= 20) | !trinket_2_buffs | trinket_2_exclude | trinket_priority = 3) & (trinket_1_buffs & (trinket.1.cooldown.remains | trinket.1.cooldown.duration <= 20) | !trinket_1_buffs | trinket_1_exclude | trinket_priority = 3)
-use_item,use_off_gcd = 1,slot = trinket1 if !trinket_1_buffs & !trinket_1_manual & (damage_trinket_priority = 1 | trinket.2.cooldown.remains | trinket.2.is.spymasters_web | trinket.2.cooldown.duration = 0) & (gcd.remains > 0.1)
-use_item,use_off_gcd = 1,slot = trinket2 if !trinket_2_buffs & !trinket_2_manual & (damage_trinket_priority = 2 | trinket.1.cooldown.remains | trinket.1.is.spymasters_web | trinket.1.cooldown.duration = 0) & (gcd.remains > 0.1)
-use_item,slot = trinket1 if !trinket_1_buffs & !trinket_1_manual & (damage_trinket_priority = 1 | trinket.2.cooldown.remains | trinket.2.is.spymasters_web | trinket.2.cooldown.duration = 0) & (!trinket_1_ogcd_cast)
-use_item,slot = trinket2 if !trinket_2_buffs & !trinket_2_manual & (damage_trinket_priority = 2 | trinket.1.cooldown.remains | trinket.1.is.spymasters_web | trinket.1.cooldown.duration = 0) & (!trinket_2_ogcd_cast)
+# annihilator_ranged
+pick_up_fragment,mode = nearest,type = all,use_off_gcd = 1,line_cd = 0.6 if !metamorphosis.up & !void_metamorphosis_stack.at_max_stacks & void_metamorphosis_stack.stack >= void_metamorphosis_stack.max_stack - 1 - (active_enemies > 1)
+pick_up_fragment,use_off_gcd = 1 if metamorphosis.up & reap.cooldown & soul_fragments + collapsing_star_stacking.stack >= 30 & fury < void_metamorphosis_base_drain_ps & collapsing_star_stacking.stack < 30
+metamorphosis
+devour if soulburst.up & active_enemies = 1
+consume if soulburst.up
+void_ray if 1 & active_enemies > 1 & !eradicate.up
+collapsing_star if active_enemies > 1 & collapsing_star_stacking.stack >= 30
+call_action_list.reaps if !metamorphosis.up & action.reap.souls_consumed >= 4 & wont_drop_meta
+collapsing_star if active_enemies = 1
+call_action_list.reaps if active_enemies > 1 & eradicate.up & action.reap.souls_consumed >= 1 + 3 * set_bonus.midnight_season_2_4pc & wont_drop_meta
+call_action_list.reaps if action.reap.souls_consumed >= 4
+call_action_list.reaps if fight_remains <= 6 & action.reap.souls_consumed >= 1
+call_action_list.reaps if 1 & active_enemies > 1 & eradicate.up & action.reap.souls_consumed >= 1 + 3 * set_bonus.midnight_season_2_4pc
+void_ray if !eradicate.up | !moment_of_craving.up | !set_bonus.midnight_season_2_4pc
+call_action_list.reaps if (!eradicate.up | active_enemies = 1) & (voidfall_spending.stack >= 3 & prev_gcd.1.void_ray | voidfall_spending.react >= 3)
+call_action_list.reaps if metamorphosis.up & 1 & collapsing_star_stacking.stack + action.reap.souls_consumed >= 30 & wont_overcap_cstar & void_metamorphosis_base_drain_ps > 35 & action.reap.souls_consumed >= 1 + 3 * set_bonus.midnight_season_2_4pc & wont_drop_meta
+soul_immolation if active_soul_immolation = 0 & (!metamorphosis.up | fury < void_metamorphosis_base_drain_ps)
+devour
+consume
 
-# math_for_wizards
-variable,name = should_use_star,op = set,value = (active_enemies > 1 | apex.1 | dark_matter.up | 1) & !melee_vs if 1
-variable,name = wont_overcap_cstar,op = set,value = (collapsing_star_stacking.stack + action.reap.souls_consumed) <= collapsing_star_stacking.max_stack | !should_use_star
-variable,name = ray_after_reap,op = set,value = fury + 4 * action.reap.souls_consumed + 10 * 1 >= 100
-
-# melee_combo
-vengeful_retreat if voidstep.up & (collapsing_star_stacking.stack < 30 | cooldown.voidblade.up | cooldown.predators_wake.up | collapsing_star_stacking.stack <= 38)
-hungering_slash if active_enemies > 1
-reapers_toll if voidsurge_reapers_toll.up | active_enemies > 1
-the_hunt if 1 & 0 | 1 & 1 & metamorphosis.up
-pierce_the_veil if voidsurge_pierce_the_veil.up | 0 & active_enemies = 1 | 1 | 0 & active_enemies > 1
-predators_wake
-voidblade if (0 & active_enemies = 1 | 0 & active_enemies > 1) & 0 | 1 & 1 & metamorphosis.up
+# cooldowns
+potion if metamorphosis.up | fight_remains <= 30
+use_item,slot = trinket1 if metamorphosis.up & (void_ray_count = 0 | hero_tree.annihilator) & (!trinket.2.has_cooldown | trinket.2.cooldown.remains | trinket_priority = 1 | trinket_2_exclude) & !trinket_1_manual | trinket.1.proc.any_dps.duration >= fight_remains | fight_remains <= trinket.1.any_dps.duration
+use_item,slot = trinket2 if metamorphosis.up & (void_ray_count = 0 | hero_tree.annihilator) & (!trinket.1.has_cooldown | trinket.1.cooldown.remains | trinket_priority = 2 | trinket_1_exclude) & !trinket_2_manual | trinket.2.proc.any_dps.duration >= fight_remains | fight_remains <= trinket.2.any_dps.duration
+use_item,use_off_gcd = 1,slot = trinket1 if !trinket_1_buffs & !trinket_1_manual & (damage_trinket_priority = 1 | trinket.2.cooldown.remains | trinket.2.is.spymasters_web | trinket.2.cooldown.duration = 0) & gcd.remains > 0.1
+use_item,use_off_gcd = 1,slot = trinket2 if !trinket_2_buffs & !trinket_2_manual & (damage_trinket_priority = 2 | trinket.1.cooldown.remains | trinket.1.is.spymasters_web | trinket.1.cooldown.duration = 0) & gcd.remains > 0.1
+use_item,use_off_gcd = 1,slot = trinket1 if trinket.1.is.font_of_venomous_rage & !metamorphosis.up & rolling_torment.up & gcd.remains > 0.1
+use_item,use_off_gcd = 1,slot = trinket2 if trinket.2.is.font_of_venomous_rage & !metamorphosis.up & rolling_torment.up & gcd.remains > 0.1
+use_item,slot = trinket1 if !trinket_1_buffs & !trinket_1_manual & (damage_trinket_priority = 1 | trinket.2.cooldown.remains | trinket.2.is.spymasters_web | trinket.2.cooldown.duration = 0) & !trinket_1_ogcd_cast
+use_item,slot = trinket2 if !trinket_2_buffs & !trinket_2_manual & (damage_trinket_priority = 2 | trinket.1.cooldown.remains | trinket.1.is.spymasters_web | trinket.1.cooldown.duration = 0) & !trinket_2_ogcd_cast
 
 # reaps
 eradicate
 cull
 reap
+
+# variables
+variable,name = wont_overcap_cstar,op = set,value = !metamorphosis.up | ((collapsing_star_stacking.stack + action.reap.souls_consumed) <= collapsing_star_stacking.max_stack | !(1 & (active_enemies > 1 | apex.1 | dark_matter.up | 1)))
+variable,name = wont_drop_meta,op = set,value = !metamorphosis.up | !moment_of_craving.up | (fury > void_metamorphosis_base_drain_ps + 4 * action.reap.souls_consumed + 10 * 1 & collapsing_star_stacking.stack + action.reap.souls_consumed >= 30 | !(1 & (active_enemies > 1 | apex.1 | dark_matter.up | 1)))
+variable,name = ray_after_reap,op = set,value = fury + 4 * action.reap.souls_consumed + 10 * 1 >= 100
+variable,name = void_ray_count,op = reset if !metamorphosis.up
+variable,name = void_ray_count,op = add,value = 1 if metamorphosis.up & action.void_ray.last_used > last_ray_mark
+variable,name = last_ray_mark,op = set,value = action.void_ray.last_used
+
+# voidscarred_melee
+run_action_list,name = vsm_st if active_enemies = 1
+run_action_list,name = vsm_meta if metamorphosis.up
+run_action_list,name = vsm_out
+
+# voidscarred_ranged
+voidblade if void_metamorphosis_stack.at_max_stacks & 1
+metamorphosis if eradicate.up | 0 | active_enemies = 1
+devour if soulburst.up & active_enemies = 1
+consume if soulburst.up
+collapsing_star if active_enemies = 1 & collapsing_star_stacking.stack >= 35
+call_action_list.reaps if action.reap.souls_consumed >= 4
+call_action_list.reaps if fight_remains <= 6 & action.reap.souls_consumed >= 1
+void_ray if !eradicate.up | !moment_of_craving.up | set_bonus.midnight_season_2_4pc
+collapsing_star if active_enemies > 1
+vengeful_retreat if voidstep.up
+reapers_toll if voidsurge_reapers_toll.up
+pierce_the_veil if voidsurge_pierce_the_veil.up
+soul_immolation if active_soul_immolation = 0 & (!metamorphosis.up | fury < void_metamorphosis_base_drain_ps)
+devour
+consume
+
+# vsm_meta
+soul_immolation if void_ray_count >= 2 & active_soul_immolation = 0 & fury <= gcd.max * (void_metamorphosis_base_drain_ps - 6) - 6
+pick_up_fragment,mode = nearest,type = all,use_off_gcd = 1,line_cd = 0.35 if void_ray_count = 1 & void_ray.cooldown < gcd.max * 2 & fury < void_metamorphosis_base_drain_ps * void_ray.cooldown
+throw_glaive if void_ray_count >= 2 & fury > void_metamorphosis_base_drain_ps * gcd.max * 2 & void_ray.cooldown > gcd.max
+wait,sec = 0.05 if void_ray_count >= 2
+vengeful_retreat,use_off_gcd = 1 if voidstep.up
+void_ray if void_ray_count = 0 & 0
+eradicate if (action.reap.souls_consumed >= 10 | moment_of_craving.remains < gcd.max | void_ray.cooldown < gcd.max) & !soulburst.up
+void_ray if 1 & !eradicate.up
+reapers_toll if hungering_slash.remains < gcd.max * 2
+devour if soulburst.up
+reapers_toll if soul_fragments <= 8
+pierce_the_veil if !hungering_slash.up
+predators_wake if !hungering_slash.up
+eradicate if action.reap.souls_consumed >= 8 & !soulburst.up
+cull if action.reap.souls_consumed >= 4 & !soulburst.up
+void_ray
+soul_immolation if active_soul_immolation = 0 & fury <= gcd.max * (void_metamorphosis_base_drain_ps - 6) - 6 & void_ray.cooldown > gcd.max
+devour if fury < void_metamorphosis_base_drain_ps * (void_ray.cooldown + 3)
+
+# vsm_out
+pick_up_fragment,mode = nearest,type = all,use_off_gcd = 1,line_cd = 0.3 if !void_metamorphosis_stack.at_max_stacks & void_metamorphosis_stack.stack >= void_metamorphosis_stack.max_stack - 3
+wait,sec = 0.05 if !void_metamorphosis_stack.at_max_stacks & void_metamorphosis_stack.stack >= void_metamorphosis_stack.max_stack - 1 & time - action.pick_up_fragment.last_used < 1.5
+vengeful_retreat,use_off_gcd = 1 if voidstep.up
+voidblade if prev_gcd.1.void_ray
+metamorphosis if eradicate.up | 0 | fight_remains < 15
+the_hunt
+consume if soulburst.up & soulburst.remains < gcd.max
+eradicate if action.reap.souls_consumed >= 10 & void_metamorphosis_stack.stack < void_metamorphosis_stack.max_stack - 3 & !soulburst.up
+void_ray if 1 & !eradicate.up
+consume if soulburst.up
+hungering_slash
+soul_immolation if active_soul_immolation = 0
+reap if action.reap.souls_consumed >= 4 & !soulburst.up
+eradicate if action.reap.souls_consumed >= 4 & !soulburst.up
+void_ray
+consume
+
+# vsm_st
+pick_up_fragment,mode = nearest,type = all,use_off_gcd = 1,line_cd = 0.75 if !metamorphosis.up & !void_metamorphosis_stack.at_max_stacks & void_metamorphosis_stack.stack >= void_metamorphosis_stack.max_stack - 1
+soul_immolation if active_soul_immolation = 0 & fury < void_metamorphosis_base_drain_ps
+devour if soulburst.up
+consume if soulburst.up
+voidblade if void_metamorphosis_stack.at_max_stacks
+vengeful_retreat if void_metamorphosis_stack.at_max_stacks & the_hunt.ready & !metamorphosis.up
+the_hunt if void_metamorphosis_stack.at_max_stacks & vengeful_retreat_movement.up
+metamorphosis
+the_hunt if !metamorphosis.up & (fight_remains < 15 | void_metamorphosis_stack.stack < void_metamorphosis_stack.max_stack * 0.25)
+wait,sec = 0.05 if !metamorphosis.up & !void_metamorphosis_stack.at_max_stacks & void_metamorphosis_stack.stack >= void_metamorphosis_stack.max_stack - 1 & soul_fragments >= 1
+hungering_slash
+reapers_toll if soul_fragments <= 8
+vengeful_retreat if voidstep.up
+pierce_the_veil
+call_action_list.reaps if action.reap.souls_consumed >= 4
+predators_wake
+void_ray if !eradicate.up | !moment_of_craving.up | set_bonus.midnight_season_2_4pc
+soul_immolation if active_soul_immolation = 0 & !metamorphosis.up
+devour
+consume
 

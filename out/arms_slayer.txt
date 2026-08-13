@@ -1,0 +1,51 @@
+# actions
+potion if gcd.remains = 0 & colossus_smash.remains > 8 | time_to_die < 25
+
+# 3+ targets
+cleave if !rend_remains
+sweeping_strikes
+avatar
+execute if sudden_death.stack = 2 & colossus_smash.cooldown < 2
+colossus_smash
+cleave if collateral_damage.stack = 3
+bladestorm
+execute if sudden_death.stack = 2
+cleave
+overpower if talent.dreadnaught & charges = 2
+execute if sudden_death.up
+overpower if talent.dreadnaught
+execute
+mortal_strike
+slam
+
+# execute
+sweeping_strikes if active_enemies = 2
+avatar if colossus_smash.up | colossus_smash.cooldown > gcd | time_to_die <= 20
+colossus_smash
+heroic_strike
+bladestorm if colossus_smash.up | colossus_smash.cooldown > 25 | avatar.up | executioners_precision.stack = 2
+mortal_strike if executioners_precision.stack = 2 & (rend.remains < 2 | martial_prowess.stack = 3)
+overpower if opportunist.stack = 2 & talent.opportunist
+execute if sudden_death.up & executioner.stack > 0
+execute if rage > 40
+overpower
+execute
+
+# st
+sweeping_strikes if active_enemies = 2
+cleave if rend_remains <= gcd | colossus_smash.cooldown < 2 & rend_remains <= 10
+avatar if colossus_smash.up | colossus_smash.cooldown < 10 & colossus_smash.cooldown > gcd
+execute if sudden_death.stack = 2 | bladestorm.ready & (!imminent_demise.stack = 1 | !imminent_demise.stack = 3)
+colossus_smash
+bladestorm if colossus_smash.up | avatar.up
+heroic_strike
+overpower if opportunist.stack = 2 & talent.opportunist
+cleave if collateral_damage.stack = 3 & active_enemies = 2
+mortal_strike
+execute if sudden_death.up & executioner.up
+overpower
+cleave if active_enemies = 2 | rend_remains <= 5
+slam
+
+# notes
+avatar early?

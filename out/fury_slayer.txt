@@ -1,0 +1,36 @@
+# slayer
+recklessness
+rampage if enrage.remains < gcd
+if recklessness.up:
+    rampage if rage >= 100
+    rampage if bladestorm.ready
+    bladestorm
+    execute if sudden_death.up
+    rampage if !hack_and_slash.up
+    crushing_blow
+    odyns_fury
+    execute
+    bloodbath
+rampage if rage > 100
+execute
+execute if sudden_death.up
+odyns_fury
+execute
+raging_blow
+rampage
+bloodthirst
+whirlwind
+
+# slayer_aoe
+recklessness
+avatar
+rampage
+bladestorm if recklessness.up | time_to_die <= 5
+execute if sudden_death.up
+odyns_fury
+crushing_blow
+bloodbath
+execute
+raging_blow
+bloodthirst
+whirlwind

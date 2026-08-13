@@ -5,7 +5,7 @@ roll_the_bones,precombat_seconds = 0 if loaded_dice.up
 
 # actions
 var ambush_condition = (0 | cp.deficit >= 2 + 0) & energy >= 50
-var finish_condition = cp >= cp_max_spend - 1 - (!between_the_eyes.ready & hero_tree.fatebound)
+var finish_condition = cp >= cp_max_spend - 1 - (!between_the_eyes.ready & 0)
 var finish_condition = 1 if fang_strike.up & !between_the_eyes.ready & !killing_spree.ready
 var blade_flurry_sync = targets.blade_flurry < 2 & raid_event.adds.in > 20 | blade_flurry.up
 call_action_list.cds
@@ -17,8 +17,8 @@ ambush if 0 & audacity.up
 blade_flurry if 1 & targets >= 3
 pistol_shot if 0 & 0 & opportunity.up & !audacity.up
 pistol_shot if 1 & opportunity.up & (opportunity.stack >= opportunity.max_stack | opportunity.remains < 2)
-pistol_shot if 1 & opportunity.up & (cp.deficit >= (1 + 1 + (1 * 1)) & (cp > 1 | rtb_buffs < 2 | !talent.deal_fate))
-pistol_shot if 0 & opportunity.up & (energy.base_deficit > energy.regen * 1.5 | cp.deficit <= 1 | 1 | 0 & !audacity.up)
+pistol_shot if 1 & opportunity.up & (cp.deficit >= (1 + 1 + (1 * 2)) & (cp > 1 | rtb_buffs < 2 | 1))
+pistol_shot if 0 & opportunity.up & (energy.base_deficit > energy.regen * 1.5 | cp.deficit <= 1 | 1.enabled | 0.enabled & !audacity.up)
 ambush if 0
 sinister_strike
 
@@ -28,7 +28,7 @@ blade_flurry if targets >= 2 & blade_flurry.remains < gcd
 preparation if adrenaline_rush.cooldown > 30 & !between_the_eyes.ready & !killing_spree.ready | fight_remains < 30
 keep_it_rolling if rtb_buffs >= 3
 roll_the_bones if !roll_the_bones.up | rtb_buffs = 1 + (loaded_dice.up & between_the_eyes.ready)
-blade_rush if set_bonus.mid1_2pc | targets = 1 & energy.base_time_to_max > 2 | targets >= 2
+blade_rush if 1 | targets = 1 & energy.base_time_to_max > 2 | targets >= 2
 vanish if !finish_condition & 0 & !audacity.up & !opportunity.up
 shadowmeld if !finish_condition & 0 & !audacity.up & !opportunity.up
 potion if bloodlust.react | fight_remains < 30 | adrenaline_rush.up
