@@ -7,39 +7,39 @@ var trinket_sync_slot = 2 if trinket.2.has_use_buff & (!trinket.1.has_use_buff |
 var stealth = shadow_dance.up | stealth.up | vanish.up
 var targets = targets.shuriken_storm
 var racial_sync = (shadow_blades.up & shadow_dance.up) | fight_remains < 20
-var dance_condition = !stealth & energy >= 30 & slice_and_dice.up & (cp <= 2 & 0 | cp >= 6)
-var build_at_max_for_apex = talent.ancient_arts_3 & !ancient_arts.up & shadow_techniques.stack >= 5
+var dance_condition = !stealth & energy >= 30 & slice_and_dice.up & (cp <= 2 & 1 | cp >= 6)
+var build_at_max_for_apex = 1 & !ancient_arts.up & shadow_techniques.stack >= 5
 call_action_list.race
 call_action_list.item
 call_action_list.cds
-shuriken_storm if build_at_max_for_apex & (targets >= 3 | !used_for_danse & 1 & talent.danse_macabre) & (supercharge_1.up | secret_technique.ready)
-shadowstrike if build_at_max_for_apex & targets <= 2 & (0 | (1 & supercharge_1.up) | secret_technique.ready)
-call_action_list.finish if cp >= cp_max_spend - !0
+shuriken_storm if build_at_max_for_apex & (targets >= 3 | !used_for_danse & 0 & 0) & (supercharge_1.up | secret_technique.ready)
+shadowstrike if build_at_max_for_apex & targets <= 2 & (darkest_night.up | (0 & supercharge_1.up) | secret_technique.ready)
+call_action_list.finish if cp >= cp_max_spend - !darkest_night.up
 call_action_list.build if stealth | energy > 60
 call_action_list.fill if !stealth
 
 # build
-shuriken_storm if shadow_dance.up & premeditation.up & (deathstalkers_mark.up | 0 | 1)
-shadowstrike if !deathstalkers_mark.up & 0 & !0 | targets <= 3 | priority_rotation
+shuriken_storm if shadow_dance.up & premeditation.up & (deathstalkers_mark.up | darkest_night.up | 0)
+shadowstrike if !deathstalkers_mark.up & 1 & !darkest_night.up | targets <= 3 | priority_rotation
 shuriken_storm if targets > 1
 gloomblade if targets < 2 & !stealth
 backstab if targets < 2 & !stealth
 
 # cds
-shadow_blades if dance_condition & cooldown.shadow_dance.charges_fractional >= 1 + 0.8 * 0 & (ancient_arts.up | 0) | (fight_remains <= 20 | time_to_die.remains <= 20)
-shadow_dance if dance_condition & 0 & (targets <= 3 & (0 | secret_technique.ready & deathstalkers_mark.stack <= 1) | targets > 3 & deathstalkers_mark.stack >= 2) & (shadow_blades.cooldown >= 35 - cooldown.secret_technique.duration) | (fight_remains <= 10 | time_to_die - remains <= 9)
-shadow_dance if dance_condition & 1 & (secret_technique.ready & (shadow_blades.cooldown >= 25 - cooldown.secret_technique.duration)) | (fight_remains <= 10 | time_to_die - remains <= 9)
-shadow_dance if shadow_blades.up & (1 | targets >= 3)
+shadow_blades if dance_condition & cooldown.shadow_dance.charges_fractional >= 1 + 0.8 * 1 & (ancient_arts.up | 1) | (fight_remains <= 20 | time_to_die.remains <= 20)
+shadow_dance if dance_condition & 1 & (targets <= 3 & (darkest_night.up | secret_technique.ready & deathstalkers_mark.stack <= 1) | targets > 3 & deathstalkers_mark.stack >= 2) & (shadow_blades.cooldown >= 35 - cooldown.secret_technique.duration) | (fight_remains <= 10 | time_to_die - remains <= 9)
+shadow_dance if dance_condition & 0 & (secret_technique.ready & (shadow_blades.cooldown >= 25 - cooldown.secret_technique.duration)) | (fight_remains <= 10 | time_to_die - remains <= 9)
+shadow_dance if shadow_blades.up & (0 | targets >= 3)
 vanish if !stealth & energy >= 50 & !subterfuge.up & cp <= 2
 shadowmeld if energy >= 50 & !stealth & cp.deficit >= 2
 
 # finish
-eviscerate if 0 | !slice_and_dice.up
+eviscerate if darkest_night.up | !slice_and_dice.up
 secret_technique if shadow_dance.up | (cooldown.secret_technique.duration < 18 | shadow_dance.cooldown >= 10) & !shadow_dance.ready
 coup_de_grace if secret_technique.cooldown >= 6 | shadow_dance.up
-black_powder if 1 & targets >= (3 - talent.potent_powder) & (secret_technique.cooldown >= 3 | shadow_dance.up | shadow_blades.up)
-black_powder if 0 & targets >= 2
-eviscerate if secret_technique.cooldown >= 6 & 1 | shadow_dance.up | shadow_blades.up | deathstalkers_mark.stack > 1 | deathstalkers_mark.stack = 1 & shadow_techniques.stack >= 5
+black_powder if 0 & targets >= (3 - talent.potent_powder) & (secret_technique.cooldown >= 3 | shadow_dance.up | shadow_blades.up)
+black_powder if 1 & targets >= 2
+eviscerate if secret_technique.cooldown >= 6 & 0 | shadow_dance.up | shadow_blades.up | deathstalkers_mark.stack > 1 | deathstalkers_mark.stack = 1 & shadow_techniques.stack >= 5
 
 # item
 potion if shadow_blades.up | fight_remains < 30

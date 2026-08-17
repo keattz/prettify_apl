@@ -20,12 +20,12 @@ potion if gcd.remains = 0 & colossus_smash.remains > 8 | time_to_die < 25
 pummel if target.casting.react
 call_action_list.variables
 call_action_list.trinkets
-run_action_list,name = colossus_aoe if talent.demolish & active_enemies > 2
-run_action_list,name = colossus_execute,target_if = min:target.health.pct if talent.demolish & execute_phase
-run_action_list,name = colossus_st if talent.demolish
-run_action_list,name = slayer_aoe if talent.slayers_dominance & active_enemies > 2
-run_action_list,name = slayer_execute,target_if = min:target.health.pct if talent.slayers_dominance & execute_phase
-run_action_list,name = slayer_st if talent.slayers_dominance
+run_action_list,name = colossus_aoe if 1 & active_enemies > 2
+run_action_list,name = colossus_execute,target_if = min:target.health.pct if 1 & execute_phase
+run_action_list,name = colossus_st if 1
+run_action_list,name = slayer_aoe if 1 & active_enemies > 2
+run_action_list,name = slayer_execute,target_if = min:target.health.pct if 1 & execute_phase
+run_action_list,name = slayer_st if 1
 
 # colossus_aoe
 sweeping_strikes if colossus_smash.cooldown > 10 & sweeping_strikes.down | !talent.broad_strokes
@@ -33,15 +33,16 @@ ravager
 avatar
 colossus_smash
 champions_spear
-cleave
-mortal_strike if colossal_might.stack < 10
+cleave if collateral_damage.stack >= 2 | !rend.remains
 demolish
-overpower if talent.dreadnaught
+cleave
+slam if active_enemies >= 8
 mortal_strike
+slam if rage > 40 & active_enemies >= 7
 overpower
 execute if sweeping_strikes.up & sudden_death.up
 heroic_strike
-execute if 1
+execute
 slam
 bladestorm
 wrecking_throw
@@ -49,27 +50,29 @@ whirlwind
 
 # colossus_execute
 sweeping_strikes if active_enemies = 2
-avatar if colossus_smash.up | colossus_smash.cooldown < 10 & colossus_smash.cooldown > gcd
-ravager if colossus_smash.cooldown < 2
+avatar if colossus_smash.up | colossus_smash.cooldown < 10 & colossus_smash.cooldown > gcd | time_to_die <= 20
+ravager if colossus_smash.cooldown < 2 | time_to_die <= 12
 colossus_smash
 heroic_strike
 demolish if colossus_smash.up
-mortal_strike if colossal_might.stack < 10 | executioners_precision.stack = 2 & battlelord.remains
+mortal_strike if colossal_might.stack < 10
+mortal_strike if executioners_precision.stack = 2 & 0
 execute if 1 & rage > 75 | sudden_death.up
 overpower
+execute if rage > 75
 slam if 0
 execute
 bladestorm if active_enemies = 2
 wrecking_throw
 
 # colossus_st
+avatar if colossus_smash.up | colossus_smash.cooldown < 10 & colossus_smash.cooldown > gcd
 sweeping_strikes if active_enemies = 2
 mortal_strike if colossal_might.stack < 10
 cleave if rend_remains <= gcd | colossus_smash.cooldown < 2 & rend_remains <= 10
-rend if 0 & rend_remains <= gcd | colossus_smash.cooldown < 2 & rend_remains <= 10
+rend if rend_remains <= gcd | colossus_smash.cooldown < 2 & rend_remains <= 10
 ravager if colossus_smash.cooldown < 2
-execute if sudden_death.stack = 2 & colossus_smash.cooldown < 2 & talent.tactical_edge
-avatar if colossus_smash.up | colossus_smash.cooldown > gcd
+execute if sudden_death.stack = 2 & colossus_smash.cooldown < 2 & 1
 colossus_smash
 champions_spear
 demolish if colossal_might.up & colossus_smash.up
@@ -78,9 +81,9 @@ execute if sudden_death.stack = 2
 mortal_strike
 execute
 overpower
+slam if winding_up.stack < 3
 cleave if collateral_damage.stack = 3
-cleave if rend_remains <= gcd * 5
-rend if 0 & rend_remains <= gcd * 5
+rend if rend_remains <= gcd * 5
 bladestorm if active_enemies = 2
 slam
 wrecking_throw
@@ -90,13 +93,12 @@ cleave if !rend_remains & 1
 sweeping_strikes
 avatar
 ravager if colossus_smash.up
-execute if sudden_death.stack = 2 & colossus_smash.cooldown < 2
 colossus_smash
 cleave if collateral_damage.stack = 3
 bladestorm
 execute if sudden_death.stack = 2
 cleave
-overpower if talent.dreadnaught & charges = 2
+overpower if talent.dreadnaught & charges = 2 & sweeping_strikes.up
 execute if sudden_death.up
 overpower if talent.dreadnaught
 execute
@@ -109,13 +111,14 @@ storm_bolt if bladestorm.up
 sweeping_strikes if active_enemies = 2
 cleave if rend_remains < 2 & 0
 rend if rend_remains < 2 & 0
-avatar if colossus_smash.up | colossus_smash.cooldown > gcd | time_to_die <= 20
+avatar if colossus_smash.up | colossus_smash.cooldown < 10 & colossus_smash.cooldown > gcd | time_to_die <= 20
 colossus_smash
 heroic_strike
-bladestorm if colossus_smash.up | colossus_smash.cooldown > 25 | avatar.up | executioners_precision.stack = 2
-mortal_strike if executioners_precision.stack = 2 & (rend.remains < 2 | martial_prowess.stack = 3)
+bladestorm if colossus_smash.up | colossus_smash.cooldown > 25 | avatar.up
+execute if executioner.stack >= 4
+mortal_strike if executioners_precision.stack = 2 & (0 | martial_prowess.stack >= 3 | talent.fierce_followthrough | 0 | rend.remains < 2)
 overpower if opportunist.stack = 2 & talent.opportunist
-execute if sudden_death.up & executioner.stack > 0
+execute if colossus_smash.up | colossus_smash.cooldown < 3 | sudden_death.up & executioner.stack > 0
 execute if rage > 40
 overpower
 execute
@@ -125,7 +128,7 @@ storm_bolt if bladestorm.up
 # slayer_st
 sweeping_strikes if active_enemies = 2
 cleave if rend_remains <= gcd | colossus_smash.cooldown < 2 & rend_remains <= 10
-rend if 0 & (rend_remains <= gcd & active_enemies < 2 | colossus_smash.cooldown < 2 & rend_remains <= 10 & active_enemies < 2)
+rend if rend_remains <= gcd & active_enemies < 2 | colossus_smash.cooldown < 2 & rend_remains <= 10 & active_enemies < 2
 avatar if colossus_smash.up | colossus_smash.cooldown < 10 & colossus_smash.cooldown > gcd
 ravager if colossus_smash.cooldown <= gcd
 execute if sudden_death.stack = 2 | bladestorm.ready & (!imminent_demise.stack = 1 | !imminent_demise.stack = 3)
@@ -133,12 +136,13 @@ colossus_smash if sudden_death.stack < 2
 bladestorm if colossus_smash.up | avatar.up
 heroic_strike
 overpower if opportunist.stack = 2 & talent.opportunist
-cleave if collateral_damage.stack = 3 & active_enemies = 2
 mortal_strike
 execute if sudden_death.up & executioner.up
+overpower if opportunist.up
 overpower
-cleave if active_enemies = 2 | rend_remains <= 5
-rend if 0 & rend_remains <= 5
+slam if winding_up.stack = 5
+cleave if rend_remains <= 5
+rend if rend_remains <= 5
 slam
 wrecking_throw if active_enemies = 1
 storm_bolt if bladestorm.up
@@ -152,5 +156,5 @@ use_item,slot = trinket2 if !trinket_2_buffs & (damage_trinket_priority = 2 | !t
 # variables
 var st_planning = active_enemies = 1 & (raid_event.adds.in > 15 | !raid_event.adds.exists)
 var adds_remain = active_enemies >= 2 & (!raid_event.adds.exists | raid_event.adds.exists & raid_event.adds.remains > 5)
-var execute_phase = (talent.massacre.enabled & target.health.pct < 35) | target.health.pct < 20
+var execute_phase = (1 & target.health.pct < 35) | target.health.pct < 20
 
